@@ -1,88 +1,45 @@
+import ProductManager from '../dao/dbManagers/productdbManager.js';
+import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 
-// import ProductManager from "../dao/fileManagers/productManager.js";
-import ProductManager from "../dao/dbManagers/productManager.js";
-
-// import MessageManager from "../dao/fileManagers/messageManager.js";
-import MessageManager from "../dao/dbManagers/messageManager.js";
-
-import CartManager from "../dao/dbManagers/cartManager.js";
-
-const productManager = new ProductManager();
-const messageManager = new MessageManager();
-const cartManager = new CartManager();
 
 const router = Router();
-
+const productmanager=new ProductManager();
+const cartdbManager= new CartdbManager();
 router.get("/", async (req, res) => {
-  const { limit = 10, page = 1, category, available, sort } = req.query;
-  const {
-    docs: products,
-    hasPrevPage,
-    hasNextPage,
-    nextPage,
-    prevPage,
-  } = await productManager.getProducts(page, limit, category, available, sort);
-  res.render("home", {
-    products,
-    page,
-    hasPrevPage,
-    hasNextPage,
-    prevPage,
-    nextPage,
-    style: "styles.css",
-    title: "Products",
-  });
-});
+    const { limit = 2, page = 1, category, usable, sort } = req.query;
+    const {
+      docs: products,
+      hasPrevPage,
+      hasNextPage,
+      nextPage,
+      prevPage,
+    } = await productmanager.getProducts(page, limit, category, usable, sort);
+    res.render("products", {
+      products,
+      page,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+
+    });
+})
 
 router.get("/product/:pid", async (req, res) => {
   const { pid } = req.params;
-  const product = await productManager.getProductById(pid);
+  const product = await productmanager.getProductsbyId(pid);
   res.render("product", {
     product,
-    style: "styles.css",
-    title: "Product Detail",
+    
   });
 });
-
 router.get("/cart/:cid", async (req, res) => {
   const { cid } = req.params;
-  const cart = await cartManager.getCartById(cid);
+  const cart = await cartdbManager.getCartsbyId(cid);
   res.render("cart", {
     cart,
-    style: "styles.css",
-    title: "Product Detail",
-  });
-});
 
-router.get("/realtimeproducts", async (req, res) => {
-  const { limit = 10, page = 1, category, available, sort } = req.query;
-  const {
-    docs: products,
-    hasPrevPage,
-    hasNextPage,
-    nextPage,
-    prevPage,
-  } = await productManager.getProducts(page, limit, category, available, sort);
-
-  res.render("realTimeProducts", {
-    products,
-    page,
-    hasPrevPage,
-    hasNextPage,
-    prevPage,
-    nextPage,
-    style: "styles.css",
-    title: "Real Time Products",
-  });
-});
-
-router.get("/chat", async (req, res) => {
-  const messages = await messageManager.getMessages();
-  res.render("chat", {
-    messages,
-    style: "styles.css",
-    title: "Coder Chat",
   });
 });
 

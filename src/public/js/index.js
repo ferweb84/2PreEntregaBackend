@@ -1,45 +1,35 @@
-// const socket = io();
+const socket = io();
+Swal.fire({
+    title: "Identificate",
+    input: "text",
+    text: "Alerta basica con Sweetalert2",
+    inputValidator: (value) => {
+      return !value && "Necesitas escribir un nombre de usuario para continuar";
+    },
+    allowOutsideClick: false,
+  })
+  .then((result) => {
+    user = result.value;
+    socket.emit("user-autenticated", user);
+  });
+const list = document.getElementById("listproducts")
+const imagelist = document.getElementById("imageproducts")
+socket.on("products", (products) => {
+    // productList.innerHTML+=products // let showProducts = ""
+    console.log(products.stock)
+       let listProducts = "";
+    products.forEach((prod) => {
+     
+        listProducts += `<br>`+`-`+`The product ${prod.title} with the code ${prod.code} with a description ${prod.description} and the price of that product is ${prod.price}`;
+    });
+    list.innerHTML = `${listProducts}`
 
-
-//actividad en clase
-// const input= document.getElementById("textbox");
-// const log = document.getElementById("log");
-
-// input.addEventListener("keyup",(event)=>{
-//     event.target.value = "";
-//     socket.emit("message1", event.key);
-// });
-// socket.on ("log", (data)=>{
-//     log.innerHTML += data;
-// });
-
-//segunda parte de la actividad 
-// input.addEventListener ("keyup", (event)=>{
-//     if (event.key === "Enter"){
-//         socket.emit ("message2", input.value);
-//         input.value= "";
-//     }
-// })
-
-// socket.on("log",(data)=>{
-//     let logs = "";
-//     data.logs.forEach((log) => {
-//         logs += `El socket ${log.socketId} dice: ${log.message} </br>`;
-//     });
-
-//     log.innerHTML = logs; 
-// })
-
-// //.....................................................
-
-// socket.emit("product_added", "productObjetooooos");
-
-// socket.on ("product_added1", (data)=>{
-//     console.log (data);
-// });
-// socket.emit ("product_added2", "productObjetoooo2");
-
-// socket.on ("message3", (data)=>{
-//     console.log(data);
-// })
-// console.log ("hola, estoy ejecutando un script desde una plantilla");
+    products.thumbnails.forEach((imag)=>{
+        const imgElem=document.createElement("img");
+        console.log(imag)
+        imgElem.src = imag;
+        imgElem.alt = products.title
+        imagelist.appendChild(imgElem);
+    })
+ 
+});

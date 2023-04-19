@@ -1,194 +1,300 @@
+// import ProductManager from '../dao/fileManagers/ProductManager.js';
 import { Router } from "express";
-import { uploader } from "../utils.js";
+import { uploader } from '../utils.js';
+import ProductdbManager from "../dao/dbManagers/productdbManager.js";
+import { productModel } from "../dao/models/product.model.js";
 
-// import ProductManager from "../dao/fileManagers/ProductManager.js";
-import ProductManager from "../dao/dbManagers/productManager.js";
-
-const productManager = new ProductManager();
 const router = Router();
 
-/////////////////////////
-///////GET METHODS///////
-/////////////////////////
 
+const productdbManager = new ProductdbManager();
 router.get("/", async (req, res) => {
-  try {
-    const {
-      limit = 10,
-      page = 1,
-      category = null,
-      available = null,
-      sort = null,
-    } = req.query;
+    try {
+        const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
 
-    const products = await productManager.getProducts(
-      page,
-      limit,
-      category,
-      available,
-      sort
-    );
 
-    if (!products)
-      return res.status(404).send({
-        status: "error",
-        error: `No products found`,
-      });
+        console.log(category, available)
+        let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
 
-    if (isNaN(limit)) {
-      return res.status(400).send({
-        status: "error",
-        error: `Limit ${limit} is not a valid value`,
-      });
+        return res.send({ status: "Success", payload: consulta });
+        // let limit = req.query.limit
+
+
+        // if (!consulta) {
+        //     return res.status(404).send({
+        //         message: { error: `No products found in the list` },
+        //     });
+        // }
+
+        // if (limit) {
+        //     if (isNaN(limit)) {
+        //         return res.status(400).send({
+
+        //             message: { error: `The limit written ${limit} is not a valid value` },
+        //         });
+        //     }
+        //     const resultado = consulta.slice(0, limit);
+
+        //     return res.status(200).send({
+        //         status: "success",
+        //         message: { products: resultado },
+        //     });
+        // } else {
+        //     return res.status(200).send({
+        //         status: "success",
+        //         message: { products: consulta },
+        //     });
+        // }
+    } catch (error) {
+        console.log(error)
     }
-
-    if (isNaN(page)) {
-      return res.status(400).send({
-        status: "error",
-        error: `Page ${page} is not a valid value`,
-      });
-    }
-
-    if (isNaN(sort) && sort !== null) {
-      return res.status(400).send({
-        status: "error",
-        error: `Sort value ${sort} is not a valid value`,
-      });
-    }
-
-    res.status(200).send({
-      status: "success",
-      payload: products,
-    });
-  } catch (error) {
-    console.log(`Cannot get products with mongoose ${error}`);
-  }
 });
 
 router.get("/:pid", async (req, res) => {
-  try {
-    const pid = req.params.pid;
-    const filteredProduct = await productManager.getProductById(pid);
+    try {
+        let { pid } = req.params
 
-    if (!filteredProduct || filteredProduct == 0)
-      return res.status(404).send({
-        status: "error",
-        error: `Product with ID ${pid} was not found`,
-      });
 
-    return res.status(200).send({
-      status: "success",
-      payload: filteredProduct,
-    });
-  } catch (error) {
-    console.log(`Cannot get product with mongoose ${error}`);
-  }
+        const consultaId = await productdbManager.getProductsbyId(pid);
+        if (!consultaId) {
+            return res
+                .status(400)
+                .send({ status: "error", error: "The product does not exists" });
+        }
+        return res.send({ status: "success", payload: consultaId });
+        // if (typeof (consultaId) === "string") {
+        //     return res.status(400).send({ status: "error", message: consultaId });
+        // }
+        // return res.status(200).send({
+        //     status: "success",
+        //     message: { product: consultaId },
+        // });
+
+    } catch (error) {
+        console.log(error);
+    }
 });
+//router.post("/", uploader.array("thumbnails"), async (req,
+// router.post("/", async (req, res) => {
+//     try {
+//         let product = req.body;
+//         console.log(product);
+//         if (!product.title || !product.description || !product.code || !product.price || !product.stock || !product.category) {
+//             return res.status(400).send({
+//                 status: "error",
+//                 message: { error: "All the fields must not be empty" },
+//             });
+//         }
 
-/////////////////////////
-///////POST METHOD///////
-/////////////////////////
+//         const products = await manager.getProducts()
+//         const productIndex = await products.findIndex((prod) => prod.code === product.code);
+//         if (productIndex !== -1) {
+//             return res.status(400).send({
+//                 status: "error",
+//                 message: { error: `The product with the code${product.code} exist in the list` },
+//             });
+//         }
+//         // if (req.files) products.thumbnail = req.files;
+//         // console.log(req.files)
+//         // if (!req.files && !products.thumbnail) {
+//         //     return res.status(400).send({
+//         //         status: "error",
+//         //         message: { error: `No se pudieron guardar las miniaturas` },
+//         //     });
+//         // }
+//         //  product = await manager.addProduct(product);
+//         //return res.send(product);
+//         return res.status(201).send({
+//             status: "success",
+//             message: {
+//                 success: `Product ${product.title} successfully added`,
+//                 id: `${product.id}`,
+//             },
+//         });
 
+//     } catch (error) {
+//         console.log(error)
+//     }
+// })
+// router.post("/", uploader.array("thumbnails"), async (req, res) => {
+//     let product = req.body;
+
+//     let filesToadd = req.files
+//     console.log(product)
+
+
+
+//     if (!filesToadd) {
+//         return res.status(400).send({
+//             status: "error",
+//             message: { error: `No se pudieron guardar las miniaturas` },
+//         });
+//     }
+//     product.thumbnails = [];
+//     if (filesToadd) {
+//         filesToadd.forEach(files => {
+//             const imgUrladd = `http://localhost:8080/images/${files.filename}`;
+//             product.thumbnails.push(imgUrladd)
+//         });
+//     }
+//     let result = await manager.addProduct(product);
+
+//     if (typeof (result) === "string") {
+//         return res.status(400).send({
+//             status: "error",
+//             message: { error: result },
+//         });
+//     }
+
+
+//     res.status(201).send({
+//         status: "success",
+//         message: {
+//             success: `Product successfully added`
+
+//         },
+//     });
+// });
 router.post("/", uploader.array("thumbnails"), async (req, res) => {
-  try {
-    let { title, description, code, price, stock, category, thumbnails } =
-      req.body;
+    let product = req.body;
 
-    if (req.files) thumbnails = req.files;
 
-    if (!req.files && !thumbnails) {
-      return res.status(400).send({
-        status: "error",
-        error: `Thumbnails could not be saved`,
-      });
+
+
+
+    const filesToUpdate = req.files
+
+    product.thumbnails = [];
+
+    // if (req.files) thumbnails = req.files;
+
+    // if (!req.files) {
+    //   return res.status(400).send({
+    //     status: "error",
+    //     error: `Thumbnails could not be saved`,
+    //   });
+    // }
+    if (filesToUpdate) {
+        console.log(filesToUpdate)
+        filesToUpdate.forEach(files => {
+            const imgUrlUpdate = `http://localhost:8080/images/${files.filename}`;
+            product.thumbnails.push(imgUrlUpdate)
+        });
     }
-
-    const productObj = {
-      title,
-      description,
-      code,
-      price,
-      stock,
-      category,
-      thumbnails,
-    };
-
-    const addedProduct = await productManager.addProduct(productObj);
-
-    if (!addedProduct) {
-      return res.status(400).send({
-        status: "error",
-        error: "Product couldn't be added.",
-      });
+    const createProduct = await productdbManager.createProduct(product);
+    if (!createProduct) {
+        return res
+            .status(400)
+            .send({ status: "error", error: "Product already exists" });
     }
+    return res.send({ status: "success", payload: createProduct });
 
-    res.status(201).send({ status: "Success", payload: addedProduct });
-  } catch (error) {
-    console.log(error);
-  }
+
 });
 
-/////////////////////////
-///////PUT METHOD////////
-/////////////////////////
+router.put("/:pid", uploader.array("thumbnails"), async (req, res) => {
+    try {
+        // let { title, description, code, price, stock, category, thumbnails } =
+        // req.body;
 
-router.put("/:pid", async (req, res) => {
-  try {
-    const updateProd = req.body;
-    const updateId = req.params.pid;
+        const product = req.body;
+        const { pid } = req.params;
 
-    if (!updateProd || !updateId) {
-      return res.status(400).send({
-        status: "error",
-        error: "Incomplete values",
-      });
+
+        const filesToUpdate = req.files
+
+        product.thumbnails = [];
+
+        // if (req.files) thumbnails = req.files;
+
+        // if (!req.files) {
+        //   return res.status(400).send({
+        //     status: "error",
+        //     error: `Thumbnails could not be saved`,
+        //   });
+        // }
+        if (filesToUpdate) {
+            console.log(filesToUpdate)
+            filesToUpdate.forEach(files => {
+                const imgUrlUpdate = `http://localhost:8080/images/${files.filename}`;
+                product.thumbnails.push(imgUrlUpdate)
+            });
+        }
+
+
+        const result = await productdbManager.updateProduct(product, pid);
+        if (!product) {
+            return res.send({ status: "error", error: "Incomplete values" });
+        }
+
+        return res.send({ status: "success", payload: result });
+    } catch (error) {
+        console.log(error);
     }
+})
+// router.put("/:pid", uploader.array("thumbnails"), async (req, res) => {
+//     try {
+//         const product = req.body;
+//         const id = req.params.pid;
+//         const filesToUpdate=req.files
 
-    const updatedProduct = await productManager.updateProduct(
-      updateId,
-      updateProd
-    );
+//         product.thumbnails = [];
+//         if (filesToUpdate) {
+//             filesToUpdate.forEach(files => {
+//                 const imgUrlUpdate = `http://localhost:8080/images/${files.filename}`;
+//                 product.thumbnails.push(imgUrlUpdate)
+//             });
+//         }
+//         let result = await manager.updateProduct(Number.parseInt(id), product);
 
-    return res.status(200).send({
-      status: "success",
-      payload: updatedProduct,
-    });
-  } catch (error) {
-    console.log(`Cannot update product with mongoose ${error}`);
-  }
-});
-
-/////////////////////////
-//////DELETE METHOD//////
-/////////////////////////
-
+//         if (typeof (result) === "string") {
+//             return res.status(404).send({
+//                 status: "error",
+//                 message: { error: result },
+//             });
+//         }
+//         return res.status(200).send({
+//             status: "success",
+//             message: { update: `The product was updated` },
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// })
 router.delete("/:pid", async (req, res) => {
-  try {
-    const deleteId = req.params.pid;
+    try {
+        const { pid } = req.params;
 
-    if (!deleteId) {
-      return res.status(400).send({
-        status: "error",
-        error: "Incomplete values",
-      });
+        let result = await productdbManager.deleteProduct(pid);
+        if (!result) {
+            return res.status(404).send({
+                status: "error",
+                error: "Could not delete this product. No products founded with this ID in the database",
+            });
+        }
+        res.send({ status: "Success", payload: result });
+
+        // const id = req.params.pid;
+        // console.log(id)
+
+        // let result = await manager.deleteProducts(id);
+        // if (typeof (result) === "string") {
+        //     return res.status(404).send({
+        //         status: "error",
+        //         message: { error: result },
+        //     });
+        // }
+
+        // return res.status(200).send({
+        //     status: "success",
+        //     message: {
+        //         delete: `The product was sucessfully eliminated`,
+        //     },
+        // });
+
+    } catch (error) {
+        console.log(error);
     }
-
-    let deletedProduct = await productManager.deleteProduct(deleteId);
-
-    if (deletedProduct.deletedCount === 0) {
-      return res.status(404).send({
-        status: "error",
-        error: `Could not delete product. No product found with ID ${deleteId} in the database`,
-      });
-    }
-
-    return res.status(200).send({
-      status: "success",
-      payload: deletedProduct,
-    });
-  } catch (error) {
-    console.log(`Cannot delete product with mongoose ${error}`);
-  }
 });
 
 export default router;

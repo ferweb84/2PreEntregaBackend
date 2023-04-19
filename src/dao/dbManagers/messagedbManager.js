@@ -1,4 +1,4 @@
-import { messageModel } from "../models/message.models.js";
+import { messageModel } from "../models/message.model.js";
 import socket from "../../socket.js";
 
 export default class MessagesManager {

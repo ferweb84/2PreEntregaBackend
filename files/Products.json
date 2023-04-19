@@ -1,0 +1,138 @@
+[
+	{
+		"id": 1,
+		"status": "ok",
+		"title": "arroz",
+		"description": "lucchetti",
+		"code": "abc123",
+		"price": 250,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 15
+	},
+	{
+		"id": 2,
+		"status": "ok",
+		"title": "fideos",
+		"description": "lucchetti",
+		"code": "abc223",
+		"price": 350,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 15
+	},
+	{
+		"id": 3,
+		"status": "ok",
+		"title": "lentejas",
+		"description": "lucchetti",
+		"code": "abc323",
+		"price": 280,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 24
+	},
+	{
+		"id": 4,
+		"title": "lentejonas",
+		"description": "arcor",
+		"code": "abc323",
+		"status": "ok",
+		"price": 300,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 9
+	},
+	{
+		"id": 5,
+		"status": "true",
+		"title": "polenta",
+		"description": "lucchetti",
+		"code": "abc324",
+		"price": 275,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 25
+	},
+	{
+		"id": 6,
+		"status": "true",
+		"title": "harina",
+		"description": "lucchetti",
+		"code": "abc425",
+		"price": 276,
+		"category": "almacen",
+		"thumbnail": "img.jpg",
+		"stock": 19
+	},
+	{
+		"id": 7,
+		"status": "true",
+		"title": "yerba",
+		"description": "amanda",
+		"code": "abc555",
+		"price": "356",
+		"category": "almacen",
+		"stock": "23",
+		"thumbnail": [
+			{
+				"fieldname": "thumbnail",
+				"originalname": "yerba-amanda-500.png",
+				"encoding": "7bit",
+				"mimetype": "image/png",
+				"destination": "D:\\ESCRITORIO TECNO\\backend\\Desafio4\\PreEntrega\\src/public/img",
+				"filename": "1679002011558-yerba-amanda-500.png",
+				"path": "D:\\ESCRITORIO TECNO\\backend\\Desafio4\\PreEntrega\\src\\public\\img\\1679002011558-yerba-amanda-500.png",
+				"size": 94286
+			}
+		]
+	},
+	{
+		"id": 8,
+		"status": "true",
+		"title": "yerbamate",
+		"description": "amanda",
+		"code": "abc5557",
+		"price": "3588",
+		"category": "almacen",
+		"stock": "25",
+		"thumbnail": [
+			{
+				"fieldname": "thumbnail",
+				"originalname": "yerba-amanda-500.png",
+				"encoding": "7bit",
+				"mimetype": "image/png",
+				"destination": "D:\\ESCRITORIO TECNO\\backend\\Desafio4\\PreEntrega\\src/public/img",
+				"filename": "1679010472023-yerba-amanda-500.png",
+				"path": "D:\\ESCRITORIO TECNO\\backend\\Desafio4\\PreEntrega\\src\\public\\img\\1679010472023-yerba-amanda-500.png",
+				"size": 94286
+			}
+		]
+	},
+	{
+		"id": 9,
+		"status": "true",
+		"title": "yerbamatee",
+		"description": "amanda",
+		"code": "abc57",
+		"price": "354",
+		"category": "almacen",
+		"stock": "4",
+		"thumbnail": [
+			"http://localhost:8080/img/1679011321563-yerba-amanda-500.png"
+		]
+	},
+	{
+		"id": 10,
+		"status": "true",
+		"title": "termo",
+		"description": "Lumilagro",
+		"code": "abc12356",
+		"price": "1567",
+		"category": "bazar",
+		"stock": "45",
+		"thumbnail": [
+			"http://localhost:8080/img/1679513782846-termo_amigo1-e371afd4625939cb8b15804054016385-640-0.jpg"
+		]
+	}
+]

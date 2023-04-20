@@ -8,6 +8,8 @@ const router = Router();
 
 
 const productdbManager = new ProductdbManager();
+
+
 router.get("/", async (req, res) => {
     try {
         const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
@@ -157,9 +159,6 @@ router.get("/:pid", async (req, res) => {
 // });
 router.post("/", uploader.array("thumbnails"), async (req, res) => {
     let product = req.body;
-
-
-
 
 
     const filesToUpdate = req.files

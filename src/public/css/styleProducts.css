@@ -1,13 +1,13 @@
 
 body{
-    background-color: rgb(241, 137, 10);
+    text-align:justify;
+    background-color: rgb(36, 172, 196);
 }
 /*product.handlebars*/
 #productId{
-    color: rgb(138, 132, 132);
+    color: rgb(90, 86, 86);
     font-weight: bold;
 }
-
 
 
 

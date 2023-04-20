@@ -2,7 +2,7 @@ import ProductManager from '../dao/dbManagers/productdbManager.js';
 import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 
-
+//llamamos a Router y lo vamos a colocar en una variable router con minuscula 
 const router = Router();
 const productmanager=new ProductManager();
 const cartdbManager= new CartdbManager();
@@ -34,6 +34,8 @@ router.get("/product/:pid", async (req, res) => {
     
   });
 });
+
+// creamos una ruta que nos permita renderizar la vista que se llama cart
 router.get("/cart/:cid", async (req, res) => {
   const { cid } = req.params;
   const cart = await cartdbManager.getCartsbyId(cid);
@@ -42,5 +44,8 @@ router.get("/cart/:cid", async (req, res) => {
 
   });
 });
+//En la plantilla que contiene a chat (html) hay una variable que se llama Title y le doy un valor de Chat, ya creada amos a importarla a App
 
+
+//nunca olvidar de exportar 
 export default router;

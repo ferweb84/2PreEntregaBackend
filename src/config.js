@@ -1,5 +1,9 @@
+//importamos el dotenv (informacion sensible que no podemos subir al repositorio, lo utilizamos para que se quede en nuestro equipo)
 import dotenv from "dotenv"
+//configurar para proteger nuestras credenciales con ayuda de las variables de entorno; gracias a esta dependencia podemos ir a .env a guardar y vamos a nuestro servidor 8080 y ponemos console.log(process.env.password)
 dotenv.config();
+
+//estas variables las utilizo para reemplazar en mongoos.connect el usuario y la contraseña para que no aparezcan y no exponemos nuestra base de datos
 const user = process.env.user;
 const password = process.env.password;
 const database=process.env.database;

@@ -1,15 +1,24 @@
 import mongoose from "mongoose";
 
-const userCollection = "Users";
+const userCollection ="User";
 
+//el esquema de nuestra estructura de modelo de usuario
 const userSchema = new mongoose.Schema({
-  first_name: String,
+    first_name: {
+        type:String,
+        required: true,
+    },
+    email: {
+        type:String,
+        unique:true,
+    },
+
   last_name: String,
-  email: String,
   age: Number,
   password: String,
+
+
 });
+const userModel= mongoose.model(userCollection, userSchema);
 
-const userModel = mongoose.model(userCollection, userSchema);
-
-export default userModel;
+export {userModel};

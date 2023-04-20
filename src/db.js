@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import config from "./config.js";
 const {dbUrl}=config
+
+
+//MONGOOSE colocar el password de la base de datos y el nombre y con las variables anteriores en . env ; tenemos nuestras credenciales protegidas 
 const database ={
     connect: async function () {
         try {

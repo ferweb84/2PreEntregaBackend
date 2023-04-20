@@ -1,6 +1,4 @@
-
-
-import CartManager from "../dao/fileManagers/CartManager.js";
+import CartManager from "../dao/fileManagers/cartManager.js";
 import CartdbManager from "../dao/dbManagers/cartdbManager.js";
 import { Router } from "express";
 import { cartModel } from "../dao/models/cart.model.js";

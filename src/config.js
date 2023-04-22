@@ -1,5 +1,6 @@
 //importamos el dotenv (informacion sensible que no podemos subir al repositorio, lo utilizamos para que se quede en nuestro equipo)
 import dotenv from "dotenv"
+import { productModel } from "./dao/models/product.model";
 //configurar para proteger nuestras credenciales con ayuda de las variables de entorno; gracias a esta dependencia podemos ir a .env a guardar y vamos a nuestro servidor 8080 y ponemos console.log(process.env.password)
 dotenv.config();
 
@@ -12,6 +13,8 @@ const secret=process.env.SESSION_SECRET
 const config ={
     dbUrl:`mongodb+srv://${user}:${password}@${database}.i602mg0.mongodb.net/?retryWrites=true&w=majority`,
     sessionSecret: secret,
+
+    
 };
 
 export default config

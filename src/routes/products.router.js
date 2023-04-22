@@ -9,28 +9,28 @@ const router = Router();
 
 const productdbManager = new ProductdbManager();
 
-router.get("/", async (req, res) => {
-    let page = req.query.page;
-    const products =await productModel.paginate({},{limit:5,page, category : null, available : null, sort : null });
-    res.send({status:"success", payload: products});  
-});
-
-
-
 // router.get("/", async (req, res) => {
-//     try {
-//         const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
-
-
-//         console.log(category, available)
-//         let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
-
-//         return res.send({ status: "Success", payload: consulta });
-  
-//     } catch (error) {
-//         console.log(error)
-//     }
+//     let page = req.query.page;
+//     const products =await productModel.paginate({},{limit:5,page, category : null, available : null, sort : null });
+//     res.send({status:"success", payload: products});  
 // });
+
+
+
+router.get("/", async (req, res) => {
+    try {
+        const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
+
+
+        console.log(category, available)
+        let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
+
+        return res.send({ status: "Success", payload: consulta });
+  
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 router.get("/:pid", async (req, res) => {
     try {

@@ -9,48 +9,28 @@ const router = Router();
 
 const productdbManager = new ProductdbManager();
 
-
 router.get("/", async (req, res) => {
-    try {
-        const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
-
-
-        console.log(category, available)
-        let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
-
-        return res.send({ status: "Success", payload: consulta });
-        // let limit = req.query.limit
-
-
-        // if (!consulta) {
-        //     return res.status(404).send({
-        //         message: { error: `No products found in the list` },
-        //     });
-        // }
-
-        // if (limit) {
-        //     if (isNaN(limit)) {
-        //         return res.status(400).send({
-
-        //             message: { error: `The limit written ${limit} is not a valid value` },
-        //         });
-        //     }
-        //     const resultado = consulta.slice(0, limit);
-
-        //     return res.status(200).send({
-        //         status: "success",
-        //         message: { products: resultado },
-        //     });
-        // } else {
-        //     return res.status(200).send({
-        //         status: "success",
-        //         message: { products: consulta },
-        //     });
-        // }
-    } catch (error) {
-        console.log(error)
-    }
+    let page = req.query.page;
+    const products =await productModel.paginate({},{limit:5,page, category : null, available : null, sort : null });
+    res.send({status:"success", payload: products});  
 });
+
+
+
+// router.get("/", async (req, res) => {
+//     try {
+//         const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
+
+
+//         console.log(category, available)
+//         let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
+
+//         return res.send({ status: "Success", payload: consulta });
+  
+//     } catch (error) {
+//         console.log(error)
+//     }
+// });
 
 router.get("/:pid", async (req, res) => {
     try {

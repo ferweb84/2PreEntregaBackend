@@ -12,6 +12,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  size: {
+    type: String,
+    enum: ["small", "medium", "large"],
+    default: "medium",
+  },
   code: {
     type: String,
     required: true,
@@ -36,5 +41,7 @@ const productSchema = new mongoose.Schema({
 });
 productSchema.plugin(mongoosePaginate);
 let productModel = mongoose.model(productCollection, productSchema);
+
+
 
 export {productModel} ;

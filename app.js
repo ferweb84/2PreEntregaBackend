@@ -19,6 +19,8 @@ import morgan from "morgan";
 
 //inicializamos la app, le damos la funcionalidad, se lo asignamos a express a la variable app
 const app = express();
+
+//utilizamos este middleware de esta aplicacion, para cuando generemos una request
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));

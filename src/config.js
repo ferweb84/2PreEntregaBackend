@@ -12,7 +12,8 @@ const secret=process.env.SESSION_SECRET
 const config ={
     dbUrl:`mongodb+srv://${user}:${password}@${database}.i602mg0.mongodb.net/?retryWrites=true&w=majority`,
     sessionSecret: secret,
-}
+};
+
 export default config
 
 

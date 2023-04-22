@@ -33,9 +33,11 @@ const httpServer = app.listen(8080, () => {
 });
 
 database.connect()
-//app.use("/chat",chatRouter);
+// app.use("/chat",chat.router);
 app.use("/", viewrouter);
 app.use("/api/products", productsRouter);
 
 app.use("/api/carts", cartrouter);
 socket.connect(httpServer)
+
+

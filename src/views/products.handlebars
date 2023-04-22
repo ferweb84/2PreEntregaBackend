@@ -1,5 +1,5 @@
 <div id="app">
-  <h1 class="flex p-2 justify-center font-mono text-2xl text-slate-200">Products list</h1>
+  <h1 class="flex p-4 justify-center font-mono text-2xl text-slate-200">Ecommerce CoderProducts list:</h1>
   <h2 class="flex p-2 justify-center font-mono text-xl text-slate-200">Check our
     products:</h2>
 
@@ -13,7 +13,7 @@
       </div>
 
       <div class="px-5 pb-5">
-        <h5 >{{this.title}}</h5>
+        <h2 >{{this.title}}</h2>
         <p >{{this.description}}</p>
 
 
@@ -48,9 +48,7 @@
         class="text-slate-100 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-8 py-2.5 text-center ml-2">Previous</button></a>
     {{/if}}
 
-    <p
-      class="text-slate-100 bg-gray-500/50 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-2.5 text-center mx-4">
-      {{page}}</p>
+    <p>{{page}}</p>
 
     {{#if hasNextPage}}
     <a href="/?page={{nextPage}}"><button

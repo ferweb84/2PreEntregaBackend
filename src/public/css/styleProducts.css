@@ -1,10 +1,10 @@
 
 body{
-    background-color: rgb(241, 137, 10);
+    background-color: rgb(62, 103, 150);
 }
 /*product.handlebars*/
 #productId{
-    color: rgb(138, 132, 132);
+    color: rgb(49, 197, 197);
     font-weight: bold;
 }
 

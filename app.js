@@ -11,6 +11,8 @@ import chatRouter from "./routes/chat.router.js"
 import { multiply } from "./views/helpers.js";
 import { productModel } from "./dao/models/product.model.js";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const app = express();
 app.use(express.json());
@@ -50,6 +52,5 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartrouter);
 
 socket.connect(httpServer)
-
 
 

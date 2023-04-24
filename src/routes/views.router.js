@@ -43,4 +43,19 @@ router.get("/cart/:cid", async (req, res) => {
   });
 });
 
+//cookies
+
+router.get("/", (req, res) => {
+  res.render("home", { title: "home" });
+});
+
+router.post("/createCookie", (req, res) => {
+  const data = req.body;
+
+  return res
+    .cookie("CoderCookie", data, { maxAge: 10000 })
+    .send({ status: "success", message: "cookie set" });
+});
+
+
 export default router;

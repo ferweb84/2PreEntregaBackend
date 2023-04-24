@@ -108,6 +108,20 @@ app.get ('/login',(req,res)=>{
   }
   req.session.user= username;
   req.session.admin = true;
-  res.send ('login success!');
+  res.send ('login successful!');
 
+})
+
+//autenticaciones  - middleware de autenticacion recibe tres parametros
+//tengo autorizacion a todo 
+function auth (req, res, next){
+    if (req.session?.user==='pepe' && req.session?.admin){
+        return next();
+    }
+    //si el administrador no es pepe, no le des permiso
+    return res.status(401).send('error de autorizacion');
+}
+//creamos un ENDPOINT QUE ESTE PROTEGIDO aca utilizamos el auth
+app.get ("/private", auth,(req,res)=>{
+    res.send("Si ves esto es porque ya te logueaste")
 })

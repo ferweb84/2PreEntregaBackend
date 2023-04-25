@@ -11,6 +11,14 @@ body{
     color:aliceblue;
 }
 
+#login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top:30%
+  }
 
 
 /*********************/

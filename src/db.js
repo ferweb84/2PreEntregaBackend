@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import config from "./config.js";
+
 const {dbUrl}=config
+
+
 const database ={
     connect: async function () {
         try {

@@ -1,19 +1,25 @@
-const addToCartForms = document.querySelectorAll('[id^="addToCartForm-"]');
-
-addToCartForms.forEach((form) => {
-  form.addEventListener("submit", (e) => {
+const logout= document.getElementById("logout")
+const formButton= document.getElementById('botonForm');
+// addToCart.forEach((form) => {
+const home=document.getElementById("home");
+  formButton.addEventListener("click", (e) => {
     e.preventDefault();
-    const cartId = form.querySelector("#cid").value;
-    const productId = form.getAttribute("id").split("-")[1];
-    const prodTitle = form.closest("div").querySelector("h5").textContent;
+    // alert(form.getAttribute("id"))
+    const cartId = document.querySelector("#cid").value;
 
-    fetch(`/api/carts/${cartId}/product/${productId}`, {
+    // const productId = form.getAttribute("id").split("-")[1];
+    const prod=document.getElementById('productId');
+    const value=prod.innerText.split(" ")[4]
+    const title=document.getElementById("title")
+    // const prodTitle = form.closest("div").querySelector("h5").textContent;
+
+    fetch(`/api/carts/${cartId}/product/${value}`, {
       method: "POST",
     })
       .then(() => {
         Swal.fire({
           title: "Product added to cart!",
-          text: `You added 1 unit of ${prodTitle}`,
+          text: `You added 1 unit of the product ${title.innerHTML}`,
           toast: true,
           position: "top-right",
           icon: "success",
@@ -26,4 +32,37 @@ addToCartForms.forEach((form) => {
       })
       .catch((error) => console.log(error));
   });
-});
+ 
+  
+  home.addEventListener("click",(e)=>{
+    e.preventDefault();
+    window.location.href = "/products";
+  })
+  logout.addEventListener("click",(e)=>{
+    fetch(`/api/sessions/logout`, {
+      method: "GET",
+    }) .then(() => {
+      Swal.fire({
+        title: "Logout successful!",
+        text: `Redirecting you to the login`,
+        allowOutsideClick: false,
+        confirmButton: false,
+        icon: "success",
+        timer: 3000,
+        //timerProgressBar: true,
+        customClass: {
+          popup: "!text-slate-200 !bg-slate-800/90 !rounded-3xl",
+          confirmButton: "!bg-blue-600 !px-5",
+          timerProgressBar: "!m-auto !h-1 !my-2 !bg-blue-600/90 !rounded-3xl",
+        },
+        willClose: () => {
+          window.location.href = "/";
+        }
+        
+      });
+    })
+    .catch((error) => console.log(error));
+  
+  })
+  
+// });

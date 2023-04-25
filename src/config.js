@@ -3,7 +3,7 @@ dotenv.config();
 const user = process.env.user;
 const password = process.env.password;
 const database=process.env.database;
-const secret=process.env.SESSION_SECRET
+const secret=process.env.sessionSecret
 
 const config ={
     dbUrl:`mongodb+srv://${user}:${password}@${database}.i602mg0.mongodb.net/?retryWrites=true&w=majority`,

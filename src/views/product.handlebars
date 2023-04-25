@@ -1,5 +1,21 @@
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Desafio Loggin Loggout</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" id="home">Home</a>
+        </li>
+      </ul>
+      <div><button id="logout">Log out</button></div>
+    </div>
+  </div>
+</nav>
 <div id="app">
-    <h1 id="productId">Details of the product with the ID
+    <h1 id="productId">Detalle del producto con Id
         {{product._id}}</h1>
     <div id="productDetail" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <div id="product-{{product._id}}" class="max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 m-1">

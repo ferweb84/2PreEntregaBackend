@@ -6,18 +6,26 @@ import dotenv from "dotenv";
 import productsRouter from './routes/products.router.js';
 import cartrouter from './routes/cart.router.js';
 import viewrouter from './routes/views.router.js';
-import chatRouter from "./routes/chat.router.js";
+import sessionsRouter from "./routes/sessions.router.js";
+// import usersRouter from "./routes/users.router.js"
 import database from "./db.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import FileStorage from "session-file-store";
+import MongoStore from "connect-mongo";
+import morgan from "morgan";
+import config from "./config.js"
 
 
+//initialization
 const app = express();
 
-
+//middlewares
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
+app.set("trust proxy", 1)
 
 
 app.engine("handlebars", handlebars.engine());
@@ -35,15 +43,20 @@ const httpServer = app.listen(8080, () => {
     }
 });
 
+//database connection
 database.connect()
+socket.connect(httpServer)
+
 //app.use("/chat",chatRouter);
 app.use("/", viewrouter);
 app.use("/api/products", productsRouter);
-
 app.use("/api/carts", cartrouter);
-socket.connect(httpServer)
+app.use("/api/sessions", sessionsRouter);
+// app.use("/api/users",usersRouter);
 
 
+//file session (persistencia de archivos)
+const fileStorage = FileStorage (session);
 
 //-----------------------------------//
 //COOKIE (nunca poner informacion comprometida)
@@ -71,13 +84,31 @@ app.get ("/deleteCookie", (req, res)=>{
     res.clearCookie("CoderCookie").send ("Cookie Deleted");
 });
 
+
 //Session middleware
-
+//retries: cuantas veces puede intentar abrir la sesion 
 app.use(session({
-    secret:'secretCoder', 
-    resave:true, 
-    saveUninitialized:true }));
+    // store: new fileStorage({path: "./sessions", ttl:100, retries: 0}),//se agrega la linea de filestorage sessions
+    store: MongoStore.create({
+        mongoUrl:config.dbUrl,
+        ttl:20
+    }),
+    resave:true, //deja la sesion viva abierta (true)
+    saveUninitialized:false, //crear sesion para calquier usario que no este logeado
+    secret:'secret',})
+    );
 
+app.get ("/mongostore",(req,res)=>{
+    return res.send({
+        status: "sucess",
+        payload:"Yo sabia que te conocia, Te di un plato de avena en 1947 para q pintaras mi cocina y nunca la pintaste"
+    });
+})
+
+
+app.get('/fileSessions',(req,res)=>{
+    return res.send ({status: "success",payload: "hello"})
+});
 
     //creamos endpoints
 app.get ('/session', (req,res)=> {
@@ -125,3 +156,4 @@ function auth (req, res, next){
 app.get ("/private", auth,(req,res)=>{
     res.send("Si ves esto es porque ya te logueaste")
 })
+

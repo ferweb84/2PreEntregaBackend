@@ -26,13 +26,17 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true,
+    enum: ["comestible", "bazar","limpieza"],
+    default: "comestible",
   },
   stock: {
     type: Number,
     required: true,
   },
-  thumbnails: Array
+  thumbnails: {
+    type: Array,
+    default: [],
+  },
 });
 productSchema.plugin(mongoosePaginate);
 let productModel = mongoose.model(productCollection, productSchema);

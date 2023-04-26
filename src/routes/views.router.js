@@ -3,12 +3,14 @@ import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 import { checkLogged,checkLogin } from '../../middlewares/auth.js';
 // import UserManager from '../dao/dbManagers/userdbManager.js';
-
+import MessageManager from '../dao/dbManagers/messagedbManager.js';
 
 const router = Router();
 // const usermanager= new UserManager();
 const productmanager = new ProductManager();
 const cartdbManager = new CartdbManager();
+const messageManager = new MessageManager();
+
 router.get("/products", async (req, res) => {
   const { limit = 2, page = 1, category, usable, sort } = req.query;
   const {
@@ -62,7 +64,7 @@ router.get("/products", (req, res) => {
 
 //cookies
 
-router.get("/", (req, res) => {
+router.get("/cookie", (req, res) => {
   res.render("home", { title: "home" });
 });
 
@@ -106,5 +108,13 @@ router.get("/", checkLogin, (req, res) => {
 //   }
 //   return res.send({ status: "success", payload: createdUser });
 // });
+
+
+//chat CODERCHAT
+
+router.get("/chat", async (req, res) => {
+  const messages = await messageManager.getMessages();
+  return res.render("messages");
+});
 
 export default router;

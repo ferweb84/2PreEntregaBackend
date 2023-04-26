@@ -1,7 +1,7 @@
-import { messageModel } from "../models/message.model.js";
+import messageModel from "../models/message.model.js";
 import socket from "../../socket.js";
 
-export default class MessagesManager {
+export default class MessageManager {
   constructor() {}
 
   getMessages = async () => {
@@ -16,7 +16,7 @@ export default class MessagesManager {
   saveMessage = async (message) => {
     try {
       const createdMessage = await messageModel.create(message);
-      socket.io.emit("message_add", createdMessage);
+      socket.io.emit("message", createdMessage);
       return createdMessage;
     } catch (error) {
       console.log(error);

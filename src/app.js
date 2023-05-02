@@ -14,7 +14,11 @@ import session from "express-session";
 import FileStorage from "session-file-store";
 import MongoStore from "connect-mongo";
 import morgan from "morgan";
-import config from "./config.js"
+import config from "./config.js";
+import passport from "passport";
+import initializePassport from "./auth/passport.js";
+// import passport from "passport";
+// import initializePassport from "../middlewares/passport.js";
 
 
 //initialization
@@ -97,6 +101,10 @@ app.use(session({
     saveUninitialized:false, //crear sesion para calquier usario que no este logeado
     secret:'secret',})
     );
+
+    initializePassport()
+    app.use(passport.initialize())
+    app.use(passport.session())
 
 app.get ("/mongostore",(req,res)=>{
     return res.send({

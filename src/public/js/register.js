@@ -3,6 +3,7 @@ const form = document.getElementById("registerForm");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  
   const data = new FormData(form);
   const obj = {};
 

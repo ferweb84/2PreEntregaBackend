@@ -2,14 +2,11 @@ import ProductManager from '../dao/dbManagers/productdbManager.js';
 import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 import { checkLogged,checkLogin } from '../../middlewares/auth.js';
-// import UserManager from '../dao/dbManagers/userdbManager.js';
-
 
 const router = Router();
-// const usermanager= new UserManager();
 const productmanager = new ProductManager();
 const cartdbManager = new CartdbManager();
-router.get("/products", async (req, res) => {
+router.get("/products",checkLogin, async (req, res) => {
   const { limit = 2, page = 1, category, usable, sort } = req.query;
   const {
     docs: products,
@@ -30,7 +27,7 @@ router.get("/products", async (req, res) => {
   });
 })
 
-router.get("/product/:pid",async (req, res) => {
+router.get("/product/:pid", checkLogin,async (req, res) => {
   const { pid } = req.params;
   const product = await productmanager.getProductsbyId(pid);
   res.render("product", {
@@ -38,7 +35,7 @@ router.get("/product/:pid",async (req, res) => {
 
   });
 });
-router.get("/cart/:cid", async (req, res) => {
+router.get("/cart/:cid", checkLogin,async (req, res) => {
   const { cid } = req.params;
   const cart = await cartdbManager.getCartsbyId(cid);
   res.render("cart", {
@@ -48,15 +45,15 @@ router.get("/cart/:cid", async (req, res) => {
 });
 
 
-router.get("/" ,(req, res) => {
+router.get("/", checkLogged ,(req, res) => {
   res.render("login");
 });
 
-router.get("/register", (req, res) => {
+router.get("/register", checkLogged, (req, res) => {
   res.render("register");
 });
 
-router.get("/products", (req, res) => {
+router.get("/products",checkLogin, (req, res) => {
   res.render("products", { user: req.session.user });
 });
 
@@ -74,19 +71,6 @@ router.post("/createCookie", (req, res) => {
     .send({ status: "success", message: "cookie set" });
 });
 
-//sessions
-
-router.get("/login",checkLogged, (req, res) => {
-  res.render("login");
-});
-
-router.get("/register", checkLogged,  (req, res) => {
-  res.render("register");
-});
-
-router.get("/", checkLogin, (req, res) => {
-  res.render("products", {user: req.session.user });
-});
 
 
 //user 

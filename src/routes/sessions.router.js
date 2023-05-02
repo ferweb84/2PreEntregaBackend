@@ -1,12 +1,15 @@
 import { Router } from "express";
 import userModel from "../dao/models/user.model.js";
+import { isValidPassword, createHash} from "../utils.js";
+
+
 
 const router=Router()
 router.post("/register", async (req,res)=>{
     try {
-        const{first_name ,last_name,email,age,password}=req.body
-       const userex=await userModel.findOne({email})
-       if (userex){
+        const{first_name ,last_name,email,age,role,password}=req.body
+       const userexist=await userModel.findOne({email})
+       if (userexist){
         return res.status(400).send({status:"error",error:"user exists"})
        }
        const user={
@@ -14,7 +17,7 @@ router.post("/register", async (req,res)=>{
         last_name,
         email,
         age,
-        password
+        password: createHash(password),
 
     }
     await userModel.create(user);
@@ -33,24 +36,29 @@ router.post("/login", async (req, res) => {
           .status(400)
           .send({ status: "error", error: "Incorrect credentials" });
       }
-      if(user.email === "adminCoder@coder.com"){
-        user.role="admin"
-      }else{
-        user.role="user"
-      }
+      // if(user.email === "adminCoder@coder.com"){
+      //   user.role="admin"
+      // }else{
+      //   user.role="user"
+      // }
 
-      req.session.user = {
+      // req.session.user = {
+      //   name: `${user.first_name} ${user.last_name}`,
+      //   email: user.email,
+      //   age: user.age,
+      //   role: user.role
+      // };
+      const userSession = {
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
         age: user.age,
         role: user.role
       };
-
     
       res.send({
         status: "sucess",
         message: "Logged In",
-        payload: req.session.user,
+        payload: userSession,
       });
     } catch (error) {
       console.log(error);

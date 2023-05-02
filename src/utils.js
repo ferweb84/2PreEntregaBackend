@@ -1,6 +1,7 @@
 import multer from "multer";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import bycrypt from "bcrypt";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,3 +18,9 @@ const storage = multer.diskStorage({
 
 export const uploader = multer({ storage });
 export default __dirname;
+
+export const createHash =(password)=>
+ bycrypt.hashSync(password, bycrypt.genSaltSync(10));
+
+export const isValidPassword =(user,passport)=> 
+bycrypt.compareSync (passport, user.passport);

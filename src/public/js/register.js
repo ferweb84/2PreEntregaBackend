@@ -14,6 +14,11 @@ form.addEventListener("submit", async (e) => {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+    let result = await response.json();
+    console.log(result);
+  
+
   }).then(() => {
     Swal.fire({
       title: "User registered",
@@ -26,4 +31,3 @@ form.addEventListener("submit", async (e) => {
   .catch((error) => console.log(error));
 
 
-});

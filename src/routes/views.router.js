@@ -1,7 +1,7 @@
 import ProductManager from '../dao/dbManagers/productdbManager.js';
 import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
-import { checkLogged,checkLogin } from '../../middlewares/auth.js';
+import { checkLogged,checkLogin } from '../middlewares/auth.js';
 // import UserManager from '../dao/dbManagers/userdbManager.js';
 
 
@@ -19,7 +19,7 @@ router.get("/products", async (req, res) => {
     prevPage,
   } = await productmanager.getProducts(page, limit, category, usable, sort);
   res.render("products", {
-    user:req.session.user,
+    // userSession:req.session.user,
     products,
     page,
     hasPrevPage,

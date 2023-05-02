@@ -91,7 +91,7 @@ app.use(session({
     // store: new fileStorage({path: "./sessions", ttl:100, retries: 0}),//se agrega la linea de filestorage sessions
     store: MongoStore.create({
         mongoUrl:config.dbUrl,
-        ttl:20
+        ttl:60
     }),
     resave:true, //deja la sesion viva abierta (true)
     saveUninitialized:false, //crear sesion para calquier usario que no este logeado

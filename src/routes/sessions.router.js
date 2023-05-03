@@ -7,7 +7,7 @@ import { isValidPassword, createHash} from "../utils.js";
 const router=Router()
 router.post("/register", async (req,res)=>{
     try {
-        const{first_name ,last_name,email,age,role,password}=req.body
+        const{first_name ,last_name,email,age,password}=req.body
        const userexist=await userModel.findOne({email})
        if (userexist){
         return res.status(400).send({status:"error",error:"user exists"})
@@ -26,16 +26,25 @@ router.post("/register", async (req,res)=>{
         console.log(error)
     }
 })
+
+
+
 router.post("/login", async (req, res) => {
     try {
       const { email, password } = req.body;
-      const user = await userModel.findOne({ email, password });
+      //sacamos el password ya que va a ir hasheado a la base de datos, asi que pedimos solo el mail
+      const user = await userModel.findOne({ email }).lean();// BSON - JSON
   
       if (!user) {
         return res
           .status(400)
-          .send({ status: "error", error: "Incorrect credentials" });
+          .send({ status: "error", error: "User does not exist" });
       }
+
+      if (!isValidPassword(user, password)){
+        return res.status(401).send({status:"error", error: "Unathorized"});
+      }
+
       // if(user.email === "adminCoder@coder.com"){
       //   user.role="admin"
       // }else{
@@ -48,14 +57,17 @@ router.post("/login", async (req, res) => {
       //   age: user.age,
       //   role: user.role
       // };
-      const userSession = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age,
-        role: user.role
-      };
+      // const userSession = {
+      //   name: `${user.first_name} ${user.last_name}`,
+      //   email: user.email,
+      //   age: user.age,
+      //   role: user.role
+      // };
+
+      delete user.password;
+      const userSession = user;
     
-      res.send({
+      return res.send({
         status: "sucess",
         message: "Logged In",
         payload: userSession,

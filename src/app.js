@@ -15,6 +15,8 @@ import FileStorage from "session-file-store";
 import MongoStore from "connect-mongo";
 import morgan from "morgan";
 import config from "./config.js"
+import passport from "passport";
+import initializePassport from "./auth/passport.js";
 
 
 //initialization
@@ -53,6 +55,10 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartrouter);
 app.use("/api/sessions", sessionsRouter);
 // app.use("/api/users",usersRouter);
+
+
+
+
 
 
 //file session (persistencia de archivos)
@@ -97,6 +103,12 @@ app.use(session({
     saveUninitialized:false, //crear sesion para calquier usario que no este logeado
     secret:'secret',})
     );
+
+//funcion y los dos middleware
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.get ("/mongostore",(req,res)=>{
     return res.send({

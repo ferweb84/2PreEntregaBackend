@@ -15,11 +15,10 @@ form.addEventListener("submit", async (e) => {
       "Content-Type": "application/json",
     },
   });
+  console.log(obj);
     let result = await response.json();
     console.log(result);
-  
-
-  }).then(() => {
+}).then(() => {
     Swal.fire({
       title: "User registered",
       toast: true,

@@ -42,17 +42,17 @@ form.addEventListener("submit", async (e) => {
   console.log(result)
   
 
-  if(result.status === "sucess"){
+  // if(result.status === "sucess"){
 
-    window.location.href = "/products";
-  }else{
-    inputEmail.innerHTML="";
-    Swal.fire({
-      title: "User incorrect",
-      toast: true,
-      position: "top-right",
-      icon: "success",
+  //   window.location.href = "/products";
+  // }else{
+  //   inputEmail.innerHTML="";
+  //   Swal.fire({
+  //     title: "User incorrect",
+  //     toast: true,
+  //     position: "top-right",
+  //     icon: "success",
       
-    });
-  }
+  //   });
+  // }
 });

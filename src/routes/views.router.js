@@ -19,7 +19,7 @@ router.get("/products", async (req, res) => {
     prevPage,
   } = await productmanager.getProducts(page, limit, category, usable, sort);
   res.render("products", {
-    // userSession:req.session.user,
+    user:req.session.user,
     products,
     page,
     hasPrevPage,
@@ -74,19 +74,6 @@ router.post("/createCookie", (req, res) => {
     .send({ status: "success", message: "cookie set" });
 });
 
-//sessions
-
-router.get("/login",checkLogged, (req, res) => {
-  res.render("login");
-});
-
-router.get("/register", checkLogged,  (req, res) => {
-  res.render("register");
-});
-
-router.get("/", checkLogin, (req, res) => {
-  res.render("products", {user: req.session.user });
-});
 
 
 //user 

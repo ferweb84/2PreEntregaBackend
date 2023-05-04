@@ -104,6 +104,26 @@ router.get ("/failLogin", (req,res)=> {
   //   }
   // });
 
+  router.get("/github",passport.authenticate("githublogin",{scope:["user:email"] }),(req,res)=>{
+
+  })
+  
+  router.get("/githubcallback",passport.authenticate("githublogin",{failureRedirect:"/login"}),(req,res)=>{
+    req.session.user=req.user
+    res.redirect("/products")
+  })
+  router.get("/logout", (req, res) => {
+    req.session.destroy((error) => {
+      if (!error) return res.send("Logout successful!");
+  
+      return res.send({ status: "error", message: "Logout error", body: error });
+    });
+  });
+
+
+
+
+
   router.get("/logout", (req, res) => {
     req.session.destroy((error) => {
       if (!error) return res.send("Logout successful!");

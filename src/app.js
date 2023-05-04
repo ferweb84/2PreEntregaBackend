@@ -144,16 +144,16 @@ app.get('/logout',(req,res)=>{
 })
 
 //Login session 
-app.get ('/login',(req,res)=>{
-  const {username, password}= req.query;
-  if (username !== 'pepe' || password !== 'pepepass'){
-    return res.send ('login fail');
-  }
-  req.session.user= username;
-  req.session.admin = true;
-  res.send ('login successful!');
+// app.get ('/login',(req,res)=>{
+//   const {username, password}= req.query;
+//   if (username !== 'pepe' || password !== 'pepepass'){
+//     return res.send ('login fail');
+//   }
+//   req.session.user= username;
+//   req.session.admin = true;
+//   res.send ('login successful!');
 
-})
+// })
 
 //autenticaciones  - middleware de autenticacion recibe tres parametros
 //tengo autorizacion a todo 

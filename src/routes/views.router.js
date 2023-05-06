@@ -19,7 +19,7 @@ router.get("/products", async (req, res) => {
     prevPage,
   } = await productmanager.getProducts(page, limit, category, usable, sort);
   res.render("products", {
-    user:req.session.user,
+    userSession:req.session.user,
     products,
     page,
     hasPrevPage,

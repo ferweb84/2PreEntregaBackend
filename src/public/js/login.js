@@ -36,12 +36,13 @@ form.addEventListener("submit", async (e) => {
     headers: {
       "Content-Type": "application/json",
     },
+    
   }) 
-
+  console.log(obj)
   let result = await response.json();
   console.log(result)
   
-
+});
   // if(result.status === "sucess"){
 
   //   window.location.href = "/products";
@@ -55,4 +56,3 @@ form.addEventListener("submit", async (e) => {
       
   //   });
   // }
-});

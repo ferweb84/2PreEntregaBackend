@@ -19,6 +19,7 @@ import passport from "passport";
 import initializePassport from "./auth/passport.js";
 
 
+
 //initialization
 const app = express();
 
@@ -29,11 +30,46 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.set("trust proxy", 1)
 
+//Session middleware
+//retries: cuantas veces puede intentar abrir la sesion 
+// store: new fileStorage({path: "./sessions", ttl:100, retries: 0}),//se agrega la linea de filestorage sessions
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl:config.dbUrl,
+        ttl:60
+    }),
+    resave:true, //deja la sesion viva abierta (true)
+    saveUninitialized:false, //crear sesion para calquier usario que no este logeado
+    secret:'secret',})
+    );
 
+
+
+//funcion y los dos middleware
+app.use(passport.initialize());
+app.use(passport.session());
+initializePassport();
+
+
+//file session (persistencia de archivos)
+const fileStorage = FileStorage (session);
+
+//-----------------------------------//
+//COOKIE (nunca poner informacion comprometida)
+
+//creo el middleware
+//le pongo sello a la cookie 
+app.use (cookieParser("CoderClave18#$"));
+
+
+
+
+
+app.use(express.static(`${__dirname}/public`));
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
-app.use(express.static(`${__dirname}/public`));
+
 
 
 const httpServer = app.listen(8080, () => {
@@ -61,16 +97,6 @@ app.use("/api/sessions", sessionsRouter);
 
 
 
-//file session (persistencia de archivos)
-const fileStorage = FileStorage (session);
-
-//-----------------------------------//
-//COOKIE (nunca poner informacion comprometida)
-
-//creo el middleware
-//le pongo sello a la cookie 
-app.use (cookieParser("CoderClave18#$"));
-
 //endpoint para crear la cookie
 app.use("/setCookie",(req,res)=>{
     res
@@ -91,23 +117,6 @@ app.get ("/deleteCookie", (req, res)=>{
 });
 
 
-//Session middleware
-//retries: cuantas veces puede intentar abrir la sesion 
-app.use(session({
-    // store: new fileStorage({path: "./sessions", ttl:100, retries: 0}),//se agrega la linea de filestorage sessions
-    store: MongoStore.create({
-        mongoUrl:config.dbUrl,
-        ttl:60
-    }),
-    resave:true, //deja la sesion viva abierta (true)
-    saveUninitialized:false, //crear sesion para calquier usario que no este logeado
-    secret:'secret',})
-    );
-
-//funcion y los dos middleware
-initializePassport();
-app.use(passport.initialize());
-app.use(passport.session());
 
 
 app.get ("/mongostore",(req,res)=>{

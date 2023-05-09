@@ -6,7 +6,6 @@ const socket = {};
 
 socket.connect = (server) => {
   const productManager = new ProductManager();
-  //const messageManager = new MessagesManager();
 
   socket.io = new Server(server);
 
@@ -18,15 +17,6 @@ socket.connect = (server) => {
     const products = await productManager.getProducts();
     io.emit("products", products);
 
-    // socket.on("add-message", async (message) => {
-    //   await messageManager.saveMessage(message);
-    // });
-
-    // socket.on("user-auth", async (user) => {
-    //   if (user) {
-    //     socket.broadcast.emit("user-connected", user);
-    //   }
-    // });
   });
 };
 export	default socket;

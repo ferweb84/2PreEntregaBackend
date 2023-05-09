@@ -12,39 +12,10 @@ router.get("/", async (req, res) => {
     try {
         const { limit = 10, page = 1, category = null, available = null, sort = null } = req.query
 
-
         console.log(category, available)
         let consulta = await productdbManager.getProducts(page, limit, category, available, sort);
 
         return res.send({ status: "Success", payload: consulta });
-        // let limit = req.query.limit
-
-
-        // if (!consulta) {
-        //     return res.status(404).send({
-        //         message: { error: `No products found in the list` },
-        //     });
-        // }
-
-        // if (limit) {
-        //     if (isNaN(limit)) {
-        //         return res.status(400).send({
-
-        //             message: { error: `The limit written ${limit} is not a valid value` },
-        //         });
-        //     }
-        //     const resultado = consulta.slice(0, limit);
-
-        //     return res.status(200).send({
-        //         status: "success",
-        //         message: { products: resultado },
-        //     });
-        // } else {
-        //     return res.status(200).send({
-        //         status: "success",
-        //         message: { products: consulta },
-        //     });
-        // }
     } catch (error) {
         console.log(error)
     }
@@ -62,99 +33,12 @@ router.get("/:pid", async (req, res) => {
                 .send({ status: "error", error: "The product does not exists" });
         }
         return res.send({ status: "success", payload: consultaId });
-        // if (typeof (consultaId) === "string") {
-        //     return res.status(400).send({ status: "error", message: consultaId });
-        // }
-        // return res.status(200).send({
-        //     status: "success",
-        //     message: { product: consultaId },
-        // });
-
+    
     } catch (error) {
         console.log(error);
     }
 });
-//router.post("/", uploader.array("thumbnails"), async (req,
-// router.post("/", async (req, res) => {
-//     try {
-//         let product = req.body;
-//         console.log(product);
-//         if (!product.title || !product.description || !product.code || !product.price || !product.stock || !product.category) {
-//             return res.status(400).send({
-//                 status: "error",
-//                 message: { error: "All the fields must not be empty" },
-//             });
-//         }
 
-//         const products = await manager.getProducts()
-//         const productIndex = await products.findIndex((prod) => prod.code === product.code);
-//         if (productIndex !== -1) {
-//             return res.status(400).send({
-//                 status: "error",
-//                 message: { error: `The product with the code${product.code} exist in the list` },
-//             });
-//         }
-//         // if (req.files) products.thumbnail = req.files;
-//         // console.log(req.files)
-//         // if (!req.files && !products.thumbnail) {
-//         //     return res.status(400).send({
-//         //         status: "error",
-//         //         message: { error: `No se pudieron guardar las miniaturas` },
-//         //     });
-//         // }
-//         //  product = await manager.addProduct(product);
-//         //return res.send(product);
-//         return res.status(201).send({
-//             status: "success",
-//             message: {
-//                 success: `Product ${product.title} successfully added`,
-//                 id: `${product.id}`,
-//             },
-//         });
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
-// router.post("/", uploader.array("thumbnails"), async (req, res) => {
-//     let product = req.body;
-
-//     let filesToadd = req.files
-//     console.log(product)
-
-
-
-//     if (!filesToadd) {
-//         return res.status(400).send({
-//             status: "error",
-//             message: { error: `No se pudieron guardar las miniaturas` },
-//         });
-//     }
-//     product.thumbnails = [];
-//     if (filesToadd) {
-//         filesToadd.forEach(files => {
-//             const imgUrladd = `http://localhost:8080/images/${files.filename}`;
-//             product.thumbnails.push(imgUrladd)
-//         });
-//     }
-//     let result = await manager.addProduct(product);
-
-//     if (typeof (result) === "string") {
-//         return res.status(400).send({
-//             status: "error",
-//             message: { error: result },
-//         });
-//     }
-
-
-//     res.status(201).send({
-//         status: "success",
-//         message: {
-//             success: `Product successfully added`
-
-//         },
-//     });
-// });
 router.post("/", uploader.array("thumbnails"), async (req, res) => {
     let product = req.body;
 
@@ -166,14 +50,6 @@ router.post("/", uploader.array("thumbnails"), async (req, res) => {
 
     product.thumbnails = [];
 
-    // if (req.files) thumbnails = req.files;
-
-    // if (!req.files) {
-    //   return res.status(400).send({
-    //     status: "error",
-    //     error: `Thumbnails could not be saved`,
-    //   });
-    // }
     if (filesToUpdate) {
         console.log(filesToUpdate)
         filesToUpdate.forEach(files => {
@@ -204,15 +80,6 @@ router.put("/:pid", uploader.array("thumbnails"), async (req, res) => {
         const filesToUpdate = req.files
 
         product.thumbnails = [];
-
-        // if (req.files) thumbnails = req.files;
-
-        // if (!req.files) {
-        //   return res.status(400).send({
-        //     status: "error",
-        //     error: `Thumbnails could not be saved`,
-        //   });
-        // }
         if (filesToUpdate) {
             console.log(filesToUpdate)
             filesToUpdate.forEach(files => {
@@ -232,35 +99,7 @@ router.put("/:pid", uploader.array("thumbnails"), async (req, res) => {
         console.log(error);
     }
 })
-// router.put("/:pid", uploader.array("thumbnails"), async (req, res) => {
-//     try {
-//         const product = req.body;
-//         const id = req.params.pid;
-//         const filesToUpdate=req.files
 
-//         product.thumbnails = [];
-//         if (filesToUpdate) {
-//             filesToUpdate.forEach(files => {
-//                 const imgUrlUpdate = `http://localhost:8080/images/${files.filename}`;
-//                 product.thumbnails.push(imgUrlUpdate)
-//             });
-//         }
-//         let result = await manager.updateProduct(Number.parseInt(id), product);
-
-//         if (typeof (result) === "string") {
-//             return res.status(404).send({
-//                 status: "error",
-//                 message: { error: result },
-//             });
-//         }
-//         return res.status(200).send({
-//             status: "success",
-//             message: { update: `The product was updated` },
-//         });
-//     } catch (error) {
-//         console.log(error);
-//     }
-// })
 router.delete("/:pid", async (req, res) => {
     try {
         const { pid } = req.params;
@@ -274,23 +113,6 @@ router.delete("/:pid", async (req, res) => {
         }
         res.send({ status: "Success", payload: result });
 
-        // const id = req.params.pid;
-        // console.log(id)
-
-        // let result = await manager.deleteProducts(id);
-        // if (typeof (result) === "string") {
-        //     return res.status(404).send({
-        //         status: "error",
-        //         message: { error: result },
-        //     });
-        // }
-
-        // return res.status(200).send({
-        //     status: "success",
-        //     message: {
-        //         delete: `The product was sucessfully eliminated`,
-        //     },
-        // });
 
     } catch (error) {
         console.log(error);

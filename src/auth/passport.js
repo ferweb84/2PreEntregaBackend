@@ -16,7 +16,6 @@ const initializePassport =()=>{
         try {
             const {first_name, last_name, email, age }= req.body;  
             let user = await userModel.findOne({ email: username});
-//si ese usuario ya esta guardado en la base de datos; usamos done (callback)
             if(user){
                 return done(null, false );
             }
@@ -30,22 +29,17 @@ const initializePassport =()=>{
             const result = await userModel.create(newUser);
             return done (null, result);
         } catch (error) {
-            return done ("error al tratar de encontrar el usuario"+error);
-            
+            return done ("error al tratar de encontrar el usuario"+error);           
         }
        }
       )
     );
 
-
     passport.use('login', new LocalStrategy({usernameField:"mail"}, async (username, password, done)=>{
         try {
             const user = await userModel.findOne ({email: username}).lean();
-
             if(!user)return done (null,false);
-
             if(!isValidPassword(user, password)) return done ( null, false);
-
             delete user.password
             return done (null, user);
 
@@ -60,15 +54,7 @@ const initializePassport =()=>{
         clientID, clientSecret, callbackUrl},async (accessToken, refreshToken, profile, done) => {
             try {
                 console.log(profile);
-                //el profile._json.email busca el usuario en el perfil de github
                 let user = await userModel.findOne({ email: profile._json.email })
-    
-                // if (user.email === "adminCoder@coder.com") {
-                //     user.role = "admin"
-                // } else {
-                //     user.role = "user"
-                // }
-                // delete user.password
                 if (!user) {
                     let newUser = {
                         first_name: profile._json.name,

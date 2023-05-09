@@ -75,23 +75,4 @@ router.post("/createCookie", (req, res) => {
 });
 
 
-
-//user 
-
-// router.get("/", async (req, res) => {
-//   const users = await userManager.getUsers();
-//   return res.send({ status: "Success", payload: users });
-// });
-
-// router.post("/", async (req, res) => {
-//   const user = req.body;
-//   const createdUser = await userManager.createUser(user);
-//   if (!createdUser) {
-//     return res
-//       .status(400)
-//       .send({ status: "error", error: "email already exists" });
-//   }
-//   return res.send({ status: "success", payload: createdUser });
-// });
-
 export default router;

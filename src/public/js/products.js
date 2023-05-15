@@ -1,52 +1,27 @@
-const addToCartForms = document.querySelectorAll('[id^="addToCartForm-"]');
-const logout= document.getElementById("logout")
-addToCartForms.forEach((form) => {
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const cartId = form.querySelector("#cid").value;
-    const productId = form.getAttribute("id").split("-")[1];
+const cartId = "643d6913d5df55e02c93ae45";
 
-    const prodTitle = form.closest("div").querySelector("h5").textContent;
-
-    fetch(`/api/carts/${cartId}/product/${productId}`, {
-      method: "POST",
-    })
-      .then(() => {
-        Swal.fire({
-          title: "Product added to cart!",
-          text: `You added 1 unit of ${prodTitle}`,
-          toast: true,
-          position: "top-right",
-          icon: "success",
-        
-        });
-      })
-      .catch((error) => console.log(error));
+async function addToCart(productId) {
+  let response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+    method: "POST",
+    body: JSON.stringify({ quantity: 1 }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-});
-logout.addEventListener("click",(e)=>{
-  fetch(`/api/sessions/logout`, {
-    method: "GET",
-  }) .then(() => {
-    Swal.fire({
-      title: "Logout successful!",
-      text: `Redirecting you to the login`,
-      allowOutsideClick: false,
-      confirmButton: false,
-      icon: "success",
-      timer: 3000,
-      //timerProgressBar: true,
-      customClass: {
-        popup: "!text-slate-200 !bg-slate-800/90 !rounded-3xl",
-        confirmButton: "!bg-blue-600 !px-5",
-        timerProgressBar: "!m-auto !h-1 !my-2 !bg-blue-600/90 !rounded-3xl",
-      },
-      willClose: () => {
-        window.location.href = "/";
-      }
-      
-    });
-  })
-  .catch((error) => console.log(error));
 
-})
+  let result = await response.json();
+  console.log(result);
+}
+
+async function logout() {
+  let response = await fetch("/api/sessions/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const result = await response.json();
+
+  if (result.status === "sucess") window.location.href = "/login";
+}

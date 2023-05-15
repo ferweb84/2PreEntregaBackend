@@ -1,30 +1,30 @@
-const form = document.getElementById("loginForm");
-
+const form = document.getElementById("login");
+const inputEmail=document.getElementById("email");
+const inputPass=document.getElementById("password");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-const data = new FormData(form);
-const obj = {};
+  const data = new FormData(form);
+  const obj = {};
 
-data.forEach((value, key) => (obj[key] = value));
+  data.forEach((value, key) => (obj[key] = value));
 
-let response = await fetch("/api/sessions/login", {
-  method: "POST",
-  body: JSON.stringify(obj),
-  headers: {
-    "Content-Type": "application/json",
-  },
+  let response = await fetch("/api/sessions/login", {
+    method: "POST",
+    body: JSON.stringify(obj),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }) 
+  console.log(response)
+  if(response.ok){
+    window.location.href = "/products";
+  }else{
+    Swal.fire({
+      title: "Password incorrect",
+      toast: true,
+      position: "top-right",
+      icon: "error",
+    });
+  }
 });
-
-let result = await response.json();
-
-if (result.status != "sucess") {
-  Swal.fire({
-    icon: "error",
-    title: "...Oops",
-    text: result.error,
-  });
-} else {
-  window.location.href = "/";
-}}
-);

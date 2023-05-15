@@ -28,11 +28,11 @@ router.post("/login",async (req, res) => {
   if(isValidPassword(user,password)){
   return res.status(401).send({status:"error",error:"Invalid credentials"})
   }
-    if(user.email === "adminCoder@coder.com"){
-    let role = "admin"
-  }else{
-    let role = "user"
-  }
+  //   if(user.email === "adminCoder@coder.com"){
+  //   let role = "admin"
+  // }else{
+  //   let role = "user"
+  // }
  
   const jwtUser={
     first_name:`${user.first_name}`,

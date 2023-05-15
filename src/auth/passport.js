@@ -10,7 +10,7 @@ import config from "../config.js";
 const { clientID, clientSecret, callbackUrl, jwtSecret } = config;
 
 const LocalStrategy = local.Strategy;
-const JwtStrategy = jwt.Strategy;
+const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
 const cookieExtractor = (req) => {
@@ -20,12 +20,12 @@ const cookieExtractor = (req) => {
   }
   return token;
 };
-
+console.log (jwtSecret)
 const jwtOptions = {
   secretOrKey: jwtSecret,
   jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
 };
-
+console.log(jwtOptions)
 const initializePassport = () => {
   passport.use(
     "register",
@@ -65,7 +65,7 @@ const initializePassport = () => {
 
   passport.use(
     "jwt",
-    new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
+    new JWTStrategy(jwtOptions, async (jwt_payload, done) => {
       try {
         return done(null, jwt_payload);
       } catch (error) {

@@ -2,35 +2,70 @@ import ProductManager from '../dao/dbManagers/productdbManager.js';
 import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 import passport from "passport";
-// import { checkLogged,checkLogin } from '../../middlewares/auth.js';
+
 
 const router = Router();
-const productmanager = new ProductManager();
+const productManager = new ProductManager();
 const cartdbManager = new CartdbManager();
-router.get("/products", passport.authenticate("jwt", { session: false }), async (req, res) => {
-  const { limit = 2, page = 1, category, usable, sort } = req.query;
-  console.log(req.user);
-  const {
-    docs: products,
-    hasPrevPage,
-    hasNextPage,
-    nextPage,
-    prevPage,
-  } = await productmanager.getProducts(page, limit, category, usable, sort);
-  res.render("products", {
-    products,
-    page,
-    hasPrevPage,
-    hasNextPage,
-    prevPage,
-    nextPage,
-    user: req.user,
-  });
-})
+
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const options = {
+      query: {},
+      pagination: {
+        limit: req.query.limit ?? 10,
+        page: req.query.page ?? 1,
+        lean: true,
+        sort: {},
+      },
+    };
+
+    if (req.query.category) {
+      options.query.category = req.query.category;
+    }
+
+    if (req.query.status) {
+      options.query.status = req.query.status;
+    }
+
+    if (req.query.sort) {
+      options.pagination.sort.price = req.query.sort;
+    }
+
+    const {
+      docs: products,
+      totalPages,
+      prevPage,
+      nextPage,
+      page,
+      hasPrevPage,
+      hasNextPage,
+    } = await productManager.getPaginatedProducts(options);
+
+    const link = "/?page=";
+
+    const prevLink = hasPrevPage ? link + prevPage : link + page;
+    const nextLink = hasNextPage ? link + nextPage : link + page;
+
+    return res.render("home", {
+      products,
+      totalPages,
+      page,
+      hasNextPage,
+      hasPrevPage,
+      prevLink,
+      nextLink,
+      title: "Products",
+      user: req.user,
+    });
+  }
+);
 
 router.get("/product/:pid",async (req, res) => {
   const { pid } = req.params;
-  const product = await productmanager.getProductsbyId(pid);
+  const product = await productManager.getProductsbyId(pid);
   res.render("product", {
     product,
 
@@ -44,6 +79,26 @@ router.get("/cart/:cid",async (req, res) => {
   });
 });
 
+router.get("/product/:pid", async (req, res) => {
+  const productId = req.params.pid;
+  const product = await productManager.getProductById(productId);
+  res.render("product", { title: "Product Details", product });
+});
+
+router.get("/cart", async (req, res) => {
+  const cart = await cartdbManager.getCartById(cid);
+  res.render("cart", { products: cart.products, title: "Cart Items" });
+});
+
+router.get("/realtimeproducts", async (req, res) => {
+  const products = await productManager.getProducts();
+  res.render("realtime-products", {
+    products,
+    style: "styles.css",
+    title: "Real Time Products",
+  });
+});
+
 
 router.get("/" ,(req, res) => {
   res.render("login");
@@ -53,7 +108,7 @@ router.get("/register", (req, res) => {
   res.render("register");
 });
 
-router.get("/products", (req, res) => {
-  res.render("products", { user: req.user});
+router.get("/current", passport.authenticate("jwt",{session:false}), (req, res) => {
+  res.render("profile", { user: req.user});
 });
 export default router;

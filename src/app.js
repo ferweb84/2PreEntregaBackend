@@ -23,15 +23,15 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
-app.use(morgan("dev"))
-
+app.use(morgan("dev"));
+app.use(cookieParser());
 
 initializePassport()
 //View engine
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
-app.use(cookieParser());
+
 
 
 const httpServer = app.listen(8080, () => {

@@ -16,15 +16,16 @@ form.addEventListener("submit", async (e) => {
       "Content-Type": "application/json",
     },
   }) 
-  console.log(response)
-  if(response.ok){
-    window.location.href = "/products";
-  }else{
+  
+  let result = await response.json();
+
+  if (result.status != "sucess") {
     Swal.fire({
-      title: "Password incorrect",
-      toast: true,
-      position: "top-right",
       icon: "error",
+      title: "...Oops",
+      text: result.error,
     });
+  } else {
+    window.location.href = "/";
   }
 });

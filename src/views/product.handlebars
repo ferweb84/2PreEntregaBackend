@@ -1,54 +1,10 @@
-<nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">SuperCoderMercado</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" id="home">Home</a>
-        </li>
-      </ul>
-      <div><button id="logout">Log out</button></div>
-    </div>
-  </div>
-</nav>
-<div id="app">
-    <h1 id="productId">Detalle del producto con Id
-        {{product._id}}</h1>
-    <div id="productDetail" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div id="product-{{product._id}}" class="max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 m-1">
-            <div>
-                {{#each product.thumbnails}}
-                <img src="http://localhost:8080/{{this}}" alt="product image" />
-                {{/each}}
-            </div>
-            <div>
-                <h5 id="title">{{product.title}}</h5>
-                <p>Description:
-                    {{product.description}}</p>
-                <p>Category:
-                    {{product.category}}</p>
-                <p>Available stock:
-                    {{product.stock}}</p>
-                <p>Product code:
-                    {{product.code}}</p>
-
-                    <div>
-                        <p>${{product.price}}</p>
-                        <button id="botonForm">Add to Cart 🛒</button>
-                    </div>
-                    <div>
-                        <input placeholder=" " type="text" name="cid" id="cid" required />
-                        <label for="cid">Cart ID</label>
-                    </div>
-           
-            </div>
-        </div>
-    </div>
+<div id="productDetails">
+  <h1>Product Details</h1>
+  <h3>{{product.title}}</h3>
+  <p>${{product.price}}</p>
+  <p>Category: {{product.category}}</p>
+  <p>{{product.description}}</p>
+  <a id="{{product._id}}" onclick="addToCart(this.id)"><button>Agregar al
+      Carrito</button></a>
 </div>
-<script src="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
-"></script>
-<script src="/js/product.js"></script>
+<script src="/js/products.js"></script>

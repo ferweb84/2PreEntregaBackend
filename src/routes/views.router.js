@@ -1,12 +1,13 @@
-import ProductManager from '../dao/dbManagers/productdbManager.js';
-import CartdbManager from '../dao/dbManagers/cartdbManager.js';
 import { Router } from "express";
 import passport from "passport";
-
+import ProductManager from "../dao/dbManagers/products.js";
+import MessageManager from "../dao/dbManagers/messages.js";
+import CartManager from "../dao/dbManagers/carts.js";
 
 const router = Router();
 const productManager = new ProductManager();
-const cartdbManager = new CartdbManager();
+const cartManager = new CartManager();
+const messageManager = new MessageManager();
 
 router.get(
   "/",
@@ -63,22 +64,6 @@ router.get(
   }
 );
 
-router.get("/product/:pid",async (req, res) => {
-  const { pid } = req.params;
-  const product = await productManager.getProductsbyId(pid);
-  res.render("product", {
-    product,
-
-  });
-});
-router.get("/cart/:cid",async (req, res) => {
-  const { cid } = req.params;
-  const cart = await cartdbManager.getCartsbyId(cid);
-  res.render("cart", {
-    cart,
-  });
-});
-
 router.get("/product/:pid", async (req, res) => {
   const productId = req.params.pid;
   const product = await productManager.getProductById(productId);
@@ -86,7 +71,7 @@ router.get("/product/:pid", async (req, res) => {
 });
 
 router.get("/cart", async (req, res) => {
-  const cart = await cartdbManager.getCartById(cid);
+  const cart = await cartManager.getCartById("643d6913d5df55e02c93ae45");
   res.render("cart", { products: cart.products, title: "Cart Items" });
 });
 
@@ -99,16 +84,25 @@ router.get("/realtimeproducts", async (req, res) => {
   });
 });
 
+router.get("/chat", async (req, res) => {
+  const messages = await messageManager.getMessages();
+  return res.render("messages");
+});
 
-router.get("/" ,(req, res) => {
-  res.render("login");
+router.get("/login", (req, res) => {
+  res.render("login", { title: "Login" });
 });
 
 router.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", { title: "Register" });
 });
 
-router.get("/current", passport.authenticate("jwt",{session:false}), (req, res) => {
-  res.render("profile", { user: req.user});
-});
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.render("profile", { user: req.user });
+  }
+);
+
 export default router;

@@ -1,64 +1,27 @@
-// const addToCartForms = document.querySelectorAll('[id^="addToCartForm-"]');
-const logout= document.getElementById("logout")
-function myFunction(cartId,productId){
-  fetch(`/api/carts/${cartId}/product/${productId}`, {
-          method: "POST",
-        })
-          .then(() => {
-            Swal.fire({
-              title: "Product added to cart!",
-              text: `You added 1 unit `,
-              toast: true,
-              position: "top-right",
-              icon: "success",
-            
-            });
-          })
-          .catch((error) => console.log(error));
+const cartId = "6440b66102acad1337350cc8";
+
+async function addToCart(productId) {
+  let response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+    method: "POST",
+    body: JSON.stringify({ quantity: 1 }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  let result = await response.json();
+  console.log(result);
 }
-// addToCartForms.forEach((form) => {
-//   form.addEventListener("submit", (e) => {
-//     e.preventDefault();
-//     // const cartId = form.querySelector("#cid").value;
-//     // alert(cartId+"fsfsdf")
-//     const productId = form.getAttribute("id").split("-")[1];
 
-//     const prodTitle = form.closest("div").querySelector("h5").textContent;
-    
-//     fetch(`/api/carts/${cartId}/product/${productId}`, {
-//       method: "POST",
-//     })
-//       .then(() => {
-//         Swal.fire({
-//           title: "Product added to cart!",
-//           text: `You added 1 unit of ${prodTitle}`,
-//           toast: true,
-//           position: "top-right",
-//           icon: "success",
-        
-//         });
-//       })
-//       .catch((error) => console.log(error));
-//   });
-// });
-logout.addEventListener("click",(e)=>{
-  fetch(`/api/sessions/logout`, {
-    method: "GET",
-  }) .then(() => {
-    Swal.fire({
-      title: "Logout successful!",
-      text: `Redirecting you to the login`,
-      allowOutsideClick: false,
+async function logout() {
+  let response = await fetch("/api/sessions/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-      icon: "success",
-      timer: 3000,
-      //timerProgressBar: true,
-      willClose: () => {
-        window.location.href = "/";
-      }
-      
-    });
-  })
-  .catch((error) => console.log(error));
+  const result = await response.json();
 
-})
+  if (result.status === "sucess") window.location.href = "/login";
+}

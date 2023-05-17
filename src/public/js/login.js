@@ -1,6 +1,5 @@
-const form = document.getElementById("login");
-const inputEmail=document.getElementById("email");
-const inputPass=document.getElementById("password");
+const form = document.getElementById("loginForm");
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -15,8 +14,8 @@ form.addEventListener("submit", async (e) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }) 
-  
+  });
+
   let result = await response.json();
 
   if (result.status != "sucess") {

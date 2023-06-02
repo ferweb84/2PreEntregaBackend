@@ -1,37 +1,102 @@
 import { Router } from "express";
 import passport from "passport";
-import ProductManager from "../dao/dbManagers/products.js";
-import MessageManager from "../dao/dbManagers/messages.js";
-import CartManager from "../dao/dbManagers/carts.js";
-import ViewsController from "../controllers/views.controller.js";
+import { productsService, cartsService } from "../services/index.js";
 
 const router = Router();
-const productManager = new ProductManager();
-const cartManager = new CartManager();
-const messageManager = new MessageManager();
-const viewsController = new ViewsController();
 
 router.get(
   "/",
   passport.authenticate("jwt", { session: false }),
-  viewsController.getHome.bind(viewsController)
+  async (req, res) => {
+    const options = {
+      query: {},
+      pagination: {
+        limit: req.query.limit ?? 10,
+        page: req.query.page ?? 1,
+        lean: true,
+        sort: {},
+      },
+    };
+
+    if (req.query.category) {
+      options.query.category = req.query.category;
+    }
+
+    if (req.query.status) {
+      options.query.status = req.query.status;
+    }
+
+    if (req.query.sort) {
+      options.pagination.sort.price = req.query.sort;
+    }
+
+    const {
+      docs: products,
+      totalPages,
+      prevPage,
+      nextPage,
+      page,
+      hasPrevPage,
+      hasNextPage,
+    } = await productsService.getProducts(options);
+
+    const link = "/?page=";
+
+    const prevLink = hasPrevPage ? link + prevPage : link + page;
+    const nextLink = hasNextPage ? link + nextPage : link + page;
+
+    return res.render("home", {
+      products,
+      totalPages,
+      page,
+      hasNextPage,
+      hasPrevPage,
+      prevLink,
+      nextLink,
+      title: "Products",
+      user: req.user,
+    });
+  }
 );
 
-router.get("/product/:pid",viewsController
-.getProduct.bind(viewsController));
+router.get("/product/:pid", async (req, res) => {
+  const productId = req.params.pid;
+  const product = await productsService.getProductById(productId);
+  res.render("product", { title: "Product Details", product });
+});
 
-router.get("/cart",viewsController.getCart.bind(viewsController) );
+router.get(
+  "/cart",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const cart = await cartsService.getCartById(req.user.cart);
+    res.render("cart", { products: cart.products, title: "Cart Items" });
+  }
+);
 
-router.get("/realtimeproducts",viewsController.getRealTimeProducts.bind(viewsController) );
+router.get("/realtimeproducts", async (req, res) => {
+  const products = await productsService.getProducts();
+  res.render("realtime-products", {
+    products,
+    style: "styles.css",
+    title: "Real Time Products",
+  });
+});
 
-router.get("/chat",viewsController.getMessages.bind(viewsController) );
+router.get("/login", (req, res) => {
+  res.render("login", { title: "Login" });
+});
 
-router.get("/login", viewsController.getLogin.bind(viewsController) );
+router.get("/register", (req, res) => {
+  res.render("register", { title: "Register" });
+});
 
-router.get("/register", viewsController.getRegister.bind(viewsController) );
-
-router.get("/current", passport.authenticate("jwt", { session: false }),
-viewsController.getCurrentUser.bind(viewsController)
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.render("profile", { user: req.user });
+  }
 );
 
 export default router;

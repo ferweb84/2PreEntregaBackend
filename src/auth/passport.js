@@ -2,12 +2,15 @@ import passport from "passport";
 import local from "passport-local";
 import jwt from "passport-jwt";
 import GitHubStrategy from "passport-github2";
+
 import userModel from "../dao/models/users.js";
 import cartsModel from "../dao/models/carts.js";
+
 import { createHash, isValidPassword } from "../utils.js";
 import config from "../config.js";
 
-const { clientID, clientSecret, callbackUrl, jwtSecret } = config;
+
+const  { clientID, clientSecret, callbackUrl, jwtSecret} = config;
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -33,7 +36,8 @@ const initializePassport = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const { first_name, last_name, email, age, role } = req.body;
+          const { first_name, last_name, email, age } = req.body;
+          let {role} = req.body;
 
           let user = await userModel.findOne({ email: username });
 

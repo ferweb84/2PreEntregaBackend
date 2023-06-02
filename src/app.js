@@ -2,15 +2,17 @@ import express from "express";
 import handlebars from "express-handlebars";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import database from "./db.js";
+import database from "./config.js";
 import socket from "./socket.js";
 import passport from "passport";
 import initializePassport from "./auth/passport.js";
 import productsRouter from "./routes/product.router.js";
 import cartsRouter from "./routes/cart.router.js";
 import viewsRouter from "./routes/views.router.js";
+// import usersRouter from "./routes/users.router.js";
 import sessionsRouter from "./routes/sessions.router.js";
 import __dirname from "./utils.js";
+import cors from "cors";
 
 // Initialization
 const app = express();
@@ -22,6 +24,9 @@ app.set("view engine", "handlebars");
 
 // Midlewares
 app.use(express.json());
+
+app.use(cors());
+
 app.use(express.urlencoded({ extended: false }));
 app.use("/", express.static(`${__dirname}/public`));
 app.use(morgan("dev"));
@@ -43,3 +48,7 @@ const httpServer = app.listen(8080, (req, res) => {
 });
 
 socket.connect(httpServer);
+
+app.get("/test", (req,res)=>{
+  return res.send({payload:"respuesta!"});
+})

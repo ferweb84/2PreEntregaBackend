@@ -1,5 +1,3 @@
-const cartId = "6440b66102acad1337350cc8";
-
 async function addToCart(productId) {
   let response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
     method: "POST",

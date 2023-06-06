@@ -1,7 +1,7 @@
 import { Router } from "express";
 import SessionManager from "../dao/dbManagers/sessions.js";
 import { isValidPassword } from "../utils.js";
-import config from "../config.js";
+import config from "../config/config.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import SessionController from "../controllers/sessions.controller.js";

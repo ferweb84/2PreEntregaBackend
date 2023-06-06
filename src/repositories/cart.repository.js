@@ -3,6 +3,9 @@ import CartManager from "../dao/dbManagers/carts.js";
 const cartManager = new CartManager();
 
 class CartRepository {
+  constructor(dao) {
+    this.dao = dao;
+  }
   async addCart(cart) {
     try {
       return await cartManager.addCart(cart);
@@ -52,7 +55,7 @@ class CartRepository {
 
   async deleteAllProductsFromCart(cartId) {
     try {
-      return await cartManager.deleteAllProducts(cartId);
+      return await this.dao.cartManager.deleteAllProducts(cartId);
     } catch (error) {
       throw new Error(error.message);
     }

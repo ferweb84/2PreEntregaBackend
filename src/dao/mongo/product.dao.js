@@ -1,4 +1,5 @@
 import productsModel from "../models/products.js";
+import socket from "../../socket.js";
 
 export default class Product {
   constructor() {}
@@ -49,6 +50,7 @@ export default class Product {
 
   deleteProduct = async (id) => {
     try {
+      socket.io.emit("product_remove", deleteId);
       const deletedProduct = await productsModel.deleteOne({ _id: id });
       return deletedProduct;
     } catch (error) {

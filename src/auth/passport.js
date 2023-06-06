@@ -2,11 +2,11 @@ import passport from "passport";
 import local from "passport-local";
 import jwt from "passport-jwt";
 import GitHubStrategy from "passport-github2";
-import userModel from "../dao/models/users.js";
-import cartsModel from "../dao/models/carts.js";
+import userModel from "../dao/models/users.model.js";
+import cartsModel from "../dao/models/carts.model.js";
+import usersModel from "../dao/models/users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
-import config from "../config.js";
-
+import config from "../config/config.js";
 const { clientID, clientSecret, callbackUrl, jwtSecret } = config;
 
 const LocalStrategy = local.Strategy;
@@ -33,7 +33,8 @@ const initializePassport = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const { first_name, last_name, email, age, role } = req.body;
+          const { first_name, last_name, email, age} = req.body;
+          let{role}=req.body;
 
           let user = await userModel.findOne({ email: username });
 
@@ -46,10 +47,13 @@ const initializePassport = () => {
           const newUser = {
             first_name,
             last_name,
-            email,
+            email:username,
             age,
             password: createHash(password),
-            role: role ?? "user",
+            role:
+            username===`${ADMIN_EMAIL}`
+             ?(role="admin")
+             :(role="user"),
             cart: cart._id,
           };
 
@@ -57,7 +61,7 @@ const initializePassport = () => {
 
           return done(null, result);
         } catch (error) {
-          done(error);
+          done(`Error trying to create user: ${error}`);
         }
       }
     )
@@ -84,15 +88,19 @@ const initializePassport = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          let user = await userModel.findOne({ email: profile._json.email });
+          const user = await userModel.findOne({ email: profile._json.email });
           if (!user) {
             const cart = await cartsModel.create({});
-            let newUser = {
+            const newUser = {
               first_name: profile._json.name,
               last_name: "",
               age: 18,
               email: profile._json.email,
               password: "",
+              role:
+                profile._json.email === `${ADMIN_EMAIL}`
+                  ? (role = "admin")
+                  : (role = "user"),
               cart: cart._id,
             };
 

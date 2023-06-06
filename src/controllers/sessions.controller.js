@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import config from "../config.js";
+import config from "../config/config.js";
 import SessionService from "../services/sessions.services.js";
 import { isValidPassword } from "../utils.js";
 

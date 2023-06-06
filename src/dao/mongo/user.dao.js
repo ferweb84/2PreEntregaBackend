@@ -1,7 +1,16 @@
-import userModel from "../models/users.js";
+import userModel from "../models/users.model.js";
 
-export default class User {
+class User {
   constructor() {}
+
+  get =async ()=>{
+    const users = await userModel.find();
+    return users;
+  }
+  create = async (user)=>{
+    const createdUser=await userModel.create(user);
+    return createdUser;
+  };
 
   getUserById = async (filter) => {
     try {
@@ -21,3 +30,5 @@ export default class User {
     }
   };
 }
+
+export const userMongo = new User();

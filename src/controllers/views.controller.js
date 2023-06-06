@@ -75,6 +75,36 @@ class ViewsController {
     });
   }
 
+  async ticketsView (req, res) {
+    try {
+      const { email } = req.user;
+      const userTickets = await ticketsService.getTicketsByEmail(email);
+      userTickets.forEach((ticket) => {
+        const date = new Date(ticket.purchase_datetime).toLocaleString();
+        ticket.purchase_datetime = date;
+      });
+      res.render("tickets", {
+        user: req.user,
+        userTickets,
+        style: "styles.css",
+        title: "My Orders",
+      });
+  
+      if (!userTickets) {
+        return res.status(404).render("error", {
+          message: "Error 404: Tickets not found",
+          style: "styles.css",
+          title: "Error",
+        });
+      }
+    } catch (error) {
+      console.log(`Failed to render tickets view: ${error}`);
+      res
+        .status(500)
+        .send({ status: "error", error: "Failed to render tickets view" });
+    }
+  };
+
   async getMessages(req, res) {
     const messages = await viewsService.getMessages();
     return res.render("messages");

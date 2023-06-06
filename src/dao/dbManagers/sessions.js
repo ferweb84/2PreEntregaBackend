@@ -1,4 +1,4 @@
-import userModel from "../models/users.js";
+import userModel from "../models/users.model.js";
 
 export default class SessionManager {
   constructor() {}

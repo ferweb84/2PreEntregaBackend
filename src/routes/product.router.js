@@ -1,15 +1,16 @@
 import { Router } from "express";
 import ProductController from "../controllers/product.controller.js";
 import { uploader } from "../utils.js";
+// import { verifyRole } from "../middlewares/auth.js";
 
 const router = Router();
 const productController = new ProductController();
 
 router.get("/", productController.getPaginatedProducts);
 router.get("/:pid", productController.getProductById);
-router.post("/", uploader.array("thumbnails", 5), productController.addProduct);
-router.put("/:pid", productController.updateProduct);
-router.delete("/:pid", productController.deleteProduct);
+router.post("/",(req, res, next) => verifyRole(req, res, next, "admin"), uploader.array("thumbnails", 5), productController.addProduct);
+router.put("/:pid",(req, res, next) => verifyRole(req, res, next, "admin"), productController.updateProduct);
+router.delete("/:pid",(req, res, next) => verifyRole(req, res, next, "admin"), productController.deleteProduct);
 
 export default router;
 

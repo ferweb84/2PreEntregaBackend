@@ -12,8 +12,12 @@ import viewsRouter from "./routes/views.router.js";
 import sessionsRouter from "./routes/sessions.router.js";
 import __dirname from "./utils.js";
 
+
+
 // Initialization
 const app = express();
+
+
 
 // Settings
 app.engine("handlebars", handlebars.engine());

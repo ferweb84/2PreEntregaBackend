@@ -1,72 +1,41 @@
-import CartManager from "../dao/dbManagers/carts.js";
-
-const cartManager = new CartManager();
+import { cartModel } from '../dao/models/cart.model.js';
 
 class CartRepository {
-  constructor(dao) {
-    this.dao = dao;
-  }
-  async addCart(cart) {
-    try {
-      return await cartManager.addCart(cart);
-    } catch (error) {
-      throw new Error(error.message);
+    constructor() {
+        this.model = cartModel;
     }
-  }
 
-  async addProductToCart(cartId, productId, quantity) {
-    try {
-      return await cartManager.addProduct(cartId, productId, quantity);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
+    findAll = async () => {
+       try {
+        return this.model.find();
+       } catch (error) {
+        throw new Error(error);
+       }
+    };
 
-  async addProductsToCart(cartId, products) {
-    try {
-      return await cartManager.addProducts(cartId, products);
-    } catch (error) {
-      throw new Error(error.message);
+    findOne = async (id) => {
+        try {
+            return this.model.findById(id);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
-  }
 
-  async getCarts() {
-    try {
-      return await cartManager.getCarts();
-    } catch (error) {
-      throw new Error(error.message);
+    createCart = async (cart) => {
+        try {
+            return this.model.create(cart);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
-  }
-  async getCartById(cartId) {
-    try {
-      return await cartManager.getCartById(cartId);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
 
-  async deleteProductFromCart(cartId,productId) {
-    try {
-      return await cartManager.deleteProduct(cartId,productId);
-    } catch (error) {
-      throw new Error(error.message);
+    saveCart = async (cart) => {
+        try {
+            return await this.model.findOneAndUpdate({_id: cart._id}, { $set: cart });
+        } catch (error) {
+            throw new Error(error);
+        }
     }
-  }
-
-  async deleteAllProductsFromCart(cartId) {
-    try {
-      return await this.dao.cartManager.deleteAllProducts(cartId);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-  async updateProductQuantityInCart(cartId,productId,quantity) {
-    try {
-      return await cartManager.updateProductQuantity(cartId,productId,quantity);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  } 
 }
 
-export default CartRepository;
+export const cartRepository = new CartRepository();

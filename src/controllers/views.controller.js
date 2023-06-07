@@ -1,126 +1,158 @@
-import ViewsService from "../services/views.services.js";
+import { productService } from "../services/products.service.js";
+import { cartService } from "../services/cart.service.js";
+import { ticketService } from "../services/ticket.service.js";
+import { apiResponser } from "../traits/ApiResponser.js";
+import { GetProfile } from "../dao/dtos/getProfile.js";
 
-const viewsService = new ViewsService();
-
-class ViewsController {
-
-  async getHome(req, res) {
-    const options = {
-      query: {},
-      pagination: {
-        limit: req.query.limit ?? 10,
-        page: req.query.page ?? 1,
-        lean: true,
-        sort: {},
-      },
-    };
-
-    if (req.query.category) {
-      options.query.category = req.query.category;
-    }
-
-    if (req.query.status) {
-      options.query.status = req.query.status;
-    }
-
-    if (req.query.sort) {
-      options.pagination.sort.price = req.query.sort;
-    }
-
-    const {
-      products,
-      totalPages,
-      prevPage,
-      nextPage,
-      page,
-      hasPrevPage,
-      hasNextPage,
-    } = await viewsService.getPaginatedProducts(options);
-
-    const link = "/?page=";
-
-    const prevLink = hasPrevPage ? link + prevPage : link + page;
-    const nextLink = hasNextPage ? link + nextPage : link + page;
-
-    return res.render("home", {
-      products,
-      totalPages,
-      page,
-      hasNextPage,
-      hasPrevPage,
-      prevLink,
-      nextLink,
-      title: "Products",
-      user: req.user,
-    });
-  }
-
-  async getProduct(req, res) {
-    const productId = req.params.pid;
-    const product = await viewsService.getProductById(productId);
-    res.render("product", { title: "Product Details", product });
-  }
-
-  async getCart(req, res) {
-    const cart = await viewsService.getCartById("643d6913d5df55e02c93ae45");
-    res.render("cart", { products: cart.products, title: "Cart Items" });
-  }
-
-  async getRealTimeProducts(req, res) {
-    const products = await viewsService.getProducts();
-    res.render("realtime-products", {
-      products,
-      style: "styles.css",
-      title: "Real Time Products",
-    });
-  }
-
-  async ticketsView (req, res) {
+export async function home(req, res) {
     try {
-      const { email } = req.user;
-      const userTickets = await ticketsService.getTicketsByEmail(email);
-      userTickets.forEach((ticket) => {
-        const date = new Date(ticket.purchase_datetime).toLocaleString();
-        ticket.purchase_datetime = date;
-      });
-      res.render("tickets", {
-        user: req.user,
-        userTickets,
-        style: "styles.css",
-        title: "My Orders",
-      });
-  
-      if (!userTickets) {
-        return res.status(404).render("error", {
-          message: "Error 404: Tickets not found",
-          style: "styles.css",
-          title: "Error",
+        const { limit = 10, page = 1, query = "{}", sort = null } = req.query;
+        const { category, status } = JSON.parse(query);
+
+        const filters = {};
+        if (category) filters.category = category;
+        if (status) filters.status = status;
+        
+        const options = { limit, page };
+        if (sort) options.sort = sort;
+
+        const result = await productService.findAll(page, filters, options);
+        const totalPages = result.totalPages;
+        const prevPage = result.hasPrevPage ? result.prevPage : null;
+        const nextPage = result.hasNextPage ? result.nextPage : null;
+        const hasPrevPage = result.hasPrevPage;
+        const hasNextPage = result.hasNextPage;
+        const prevLink = prevPage ? `/products?limit=${limit}&page=${prevPage}&query=${query}&sort=${sort}` : null;
+        const nextLink = nextPage ? `/products?limit=${limit}&page=${nextPage}&query=${query}&sort=${sort}` : null;
+        const payload = JSON.parse(JSON.stringify(result.docs));
+        if (result && result.error) {
+            return apiResponser.errorResponse(res, result.error, 400); 
+        }
+
+        res.render('home', {
+            payload,
+            totalPages,
+            prevPage,
+            nextPage,
+            hasPrevPage,
+            hasNextPage,
+            prevLink,
+            nextLink,
+            user: req.session.user
         });
-      }
     } catch (error) {
-      console.log(`Failed to render tickets view: ${error}`);
-      res
-        .status(500)
-        .send({ status: "error", error: "Failed to render tickets view" });
+        return apiResponser.errorResponse(res, error.message);
     }
-  };
-
-  async getMessages(req, res) {
-    const messages = await viewsService.getMessages();
-    return res.render("messages");
-  }
-
-  getLogin(req, res) {
-    res.render("login", { title: "Login" });
-  }
-
-  getRegister(req, res) {
-    res.render("register", { title: "Register" });
-  }
-
-  getCurrentUser(req, res) {
-    res.render("profile", { user: req.user });
-  }
 }
 
-export default ViewsController;
+export async function getProducts(req, res) {
+    try {
+        const { limit = 10, page = 1, query = "{}", sort = null } = req.query;
+        const { category, status } = JSON.parse(query);
+
+        const filters = {};
+        if (category) filters.category = category;
+        if (status) filters.status = status;
+        
+        const options = { limit, page };
+        if (sort) options.sort = sort;
+
+        const result = await productService.findAll(page, filters, options);
+        const totalPages = result.totalPages;
+        const prevPage = result.hasPrevPage ? result.prevPage : null;
+        const nextPage = result.hasNextPage ? result.nextPage : null;
+        const hasPrevPage = result.hasPrevPage;
+        const hasNextPage = result.hasNextPage;
+        const prevLink = prevPage ? `/products?limit=${limit}&page=${prevPage}&query=${query}&sort=${sort}` : null;
+        const nextLink = nextPage ? `/products?limit=${limit}&page=${nextPage}&query=${query}&sort=${sort}` : null;
+        const payload = JSON.parse(JSON.stringify(result.docs));
+        if (result && result.error) {
+            return apiResponser.errorResponse(res, result.error, 400); 
+        }
+
+        res.render("products", {
+            payload,
+            totalPages,
+            prevPage,
+            nextPage,
+            hasPrevPage,
+            hasNextPage,
+            prevLink,
+            nextLink,
+            user: req.session.user
+        });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function viewProduct(req, res) {
+    try {
+        const { productId } = req.params;
+        const result = await productService.findOne(productId);
+        if(result && result.error) {
+            return apiResponser.errorResponse(res, result.error, 400);
+        }
+        res.render('product', {
+            product: JSON.parse(JSON.stringify(result)),
+            user: req.session.user
+        });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function viewCart(req, res) {
+    try {
+        const { cartId } = req.params;
+        const result = await cartService.findOne(cartId);
+        if(result && result.error) {
+            return apiResponser.errorResponse(res, result.error);
+        }
+        res.render('cart', {
+            cart: JSON.parse(JSON.stringify(result)),
+            user: req.session.user
+        });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function purchase(req, res) {
+    try {
+        const { cartId } = req.params;
+        const result = await ticketService.createTicket(cartId);
+        
+        res.render('purchase', {
+            ticket: JSON.parse(JSON.stringify(result)),
+            user: req.session.user
+        });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+}
+
+export async function register(req, res) {
+    try {
+        res.render('register');      
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function login(req, res) {
+    try {
+        res.render('login');      
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function profile(req, res) {
+    try {
+        const getProfile = new GetProfile(req.session.user);
+        res.render('profile', { user: getProfile });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};

@@ -1,9 +1,62 @@
-<div>
-  <h1>Cart Items</h1>
+{{!< main}}
 
-  {{#each products}}
-    <div>
-      <p>{{this.product.title}}: {{this.quantity}}</p>
+<div class="container-fluid">
+    <div class="d-flex flex-column">
+        {{#if cart.products}}
+        <h3 class="text-center" id="title">
+            <i class="fa-solid fa-cart-shopping text-primary"></i>
+            Mi carrito de compras 
+        </h3>
+        {{#each cart.products}}
+        <div class="col m-1" data-element-id="{{product._id}}">
+            <div class="d-flex flex-row align-items-center shadow border rounded-3 p-3">
+                <div class="col-2">
+                    {{#each product.thumbnails}}
+                    <img src="{{this}}" alt="product-img" style="width: 5rem;">
+                    {{/each}}
+                </div>
+                <div class="col-9">
+                    <h3>{{product.title}}</h3>
+                    <p>{{product.description}}</p>
+                    <div class="d-flex flex-column">
+                        <p>Cantidad</p>
+                        <div class="d-flex align-items-center">
+                            <div class="col-3 d-flex flex-row gap-3 text-center py-1 rounded">
+                                <button class="btn btn-primary btn-sm" onclick="agregaUno(1, '{{@root.cart._id}}', '{{product._id}}')">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <span class="text-muted" id="cantidad-{{product._id}}">{{ quantity }}</span>
+                                <button class="btn btn-primary btn-sm" onclick="borraUno(-1, '{{@root.cart._id}}', '{{product._id}}')">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1 d-flex justify-content-center align-items-center">
+                    <button class="btn btn-sm btn-danger" id="borrar" onclick="borrar('{{@root.cart._id}}', '{{product._id}}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        <div class="d-flex justify-content-end align-items-center mt-5 gap-2">
+            <button class="btn btn-sm btn-secondary" onclick="vaciarCarrito('{{@root.cart._id}}')">
+                Vaciar el carrito
+            </button>
+            <a href="/cart/{{@root.cart._id}}/purchase" class="btn btn-sm btn-primary">
+                Finalizar la compra
+            </a>
+        </div>
+        {{else}}
+        <div class="col d-flex flex-column p-3 justify-content-center align-items-center">
+            <h3 id="titleEmptyCart">
+                <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                El carrito está vacío
+            </h3>
+        </div>
+        {{/if}}
     </div>
-  {{/each}}
 </div>
+<script src="../js/index.js"></script>

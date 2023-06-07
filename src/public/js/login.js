@@ -17,14 +17,10 @@ form.addEventListener("submit", async (e) => {
   });
 
   let result = await response.json();
-
-  if (result.status != "sucess") {
-    Swal.fire({
-      icon: "error",
-      title: "...Oops",
-      text: result.error,
-    });
+  
+  if(result.error) {
+    alert(result.error);
   } else {
-    window.location.href = "/";
+    window.location.href = '/products';
   }
 });

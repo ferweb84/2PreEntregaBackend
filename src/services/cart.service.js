@@ -1,73 +1,142 @@
-import CartRepository from "../repositories/cart.repository.js"
-
-const cartRepository = new CartRepository();
+import { cartRepository } from "../repositories/cart.repository.js";
+import { productRepository } from "../repositories/products.repository.js";
+import { ticketRepository } from "../repositories/ticket.respository.js";
+import { userRepository } from "../repositories/user.repository.js";
+import { v4 as uuid4 } from 'uuid';
 
 class CartService {
+    constructor(){
+        this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.ticketRepository = ticketRepository;
+    }
 
-    async addCart (cart){
+    findAll = async () => {
         try {
-          return await cartRepository.addCart(cart);
+            return this.cartRepository.findAll();
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error);
         }
-      }
+    };
 
-      async addProductToCart (cartId, productId, quantity){
+    findOne = async (id) => {
         try {
-          return await cartRepository.addProductToCart(cartId, productId, quantity);
+            const result = await this.cartRepository.findOne(id);
+            if(!result) {
+                return { error: 'Carrito no encontrado.' };
+            }
+            return result;
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error);
         }
-      }
+    };
 
-      async addProductsToCart (cartId, products){
+    createCart = async (cart) => {
         try {
-          return await cartRepository.addProductsToCart(cartId, products);
+            return this.cartRepository.createCart(cart);
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error);      
         }
-      }
+    };
 
-      async getCarts (){
+    addProductToCart = async (id, productId, quantity = 1) => {
         try {
-          return await cartRepository.getCarts();
-        } catch (error) {
-          throw new Error(error.message);
-        }
-        
-      }
+            const cart = await this.cartRepository.findOne(id);
+            const parsedQuantity = Number(quantity);
+            if (isNaN(parsedQuantity)) {
+                return { error: `La cantidad ingresada no es válida.` };
+            }
 
-      async getCartById (cartId){
+            if (!cart) {
+                return { error: `No se encontró el carrito.` };
+            }
+
+            const existingProductIndex = cart.products.findIndex(
+                (product) => product.product && product.product._id.toString() === productId
+            );  
+
+            if (existingProductIndex !== -1) {
+                cart.products[existingProductIndex].quantity += parsedQuantity;
+            } else {
+                cart.products.push({ product: productId, quantity: parsedQuantity });
+            }
+
+            await this.cartRepository.saveCart(cart);
+            return cart;
+
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
+
+    deleteProductFromCart = async (id, productId) => {
         try {
-          return await cartRepository.getCartById(cartId);
-        } catch (error) {
-          throw new Error(error.message);
-        }
-      }
+          const cart = await this.cartRepository.findOne(id);
+          if (!cart) {
+            return { error: `No se encontró el carrito.` };
+          }
+      
+          cart.products = cart.products.filter(
+            (item) => item.product._id.toString() !== productId
+          );
 
-      async deleteProductFromCart (cartId, productId){
+          return await this.cartRepository.saveCart(cart);
+        } catch (error) {
+            console.log(error);
+          throw new Error(error);
+        }
+    };
+
+    deleteAllProductsFromCart = async (id) => {
         try {
-          return await cartRepository.deleteProductFromCart(cartId, productId);
+            const cart = await this.cartRepository.findOne(id);
+            if(!cart) {
+                return {error: `No se encontró el carrito.`};
+            }
+            cart.products = [];
+            return await this.cartRepository.saveCart(cart);
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error);
         }
-      }
+    };
 
-      async deleteAllProductsFromCart (cartId){
+    putManyProductsInCart = async (id, products) => {
         try {
-          return await cartRepository.deleteAllProductsFromCart(cartId);
+            const cart = await this.cartRepository.findOne(id);
+            if(!cart) {
+                return {error: `No se encontró el carrito.`};
+            }
+            cart.products = products;
+            return await this.cartRepository.saveCart(cart);
+            
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error);
         }
-      }
+    };
 
-      async updateProductQuantityinCart (cartId,productId,quantity){
-      try { await cartRepository.updateProductQuantityInCart(cartId,
-        productId,
-        quantity); 
-      } catch(error){
-    throw new Error (error.message);
-}
-}
-}
-export default CartService;
+    updateQuantityOfProduct = async (id, productId, quantity) => {
+        try {
+            const cart = await this.cartRepository.findOne(id);
+            if(!cart) {
+                return { error: `No se encontró el carrito.`};
+            }
+
+            const item = cart.products.find((product) => product.product._id.toString() === productId.toString());
+            if (!item) {
+                return { error: `Producto con ID ${productId} no encontrado en el carrito` };
+            }
+            
+            item.quantity = quantity;
+            if(item.quantity <= 0) {
+                return item.quantity = 0;
+            }
+            return await this.cartRepository.saveCart(cart);
+
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
+};
+
+export const cartService = new CartService();

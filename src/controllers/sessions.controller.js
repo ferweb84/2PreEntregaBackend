@@ -1,76 +1,97 @@
-import jwt from "jsonwebtoken";
-import config from "../config/config.js";
-import SessionService from "../services/sessions.services.js";
-import { isValidPassword } from "../utils.js";
+import { GetProfile } from "../dao/dtos/getProfile.js";
+import { userService } from "../services/user.service.js";
+import { apiResponser } from "../traits/ApiResponser.js";
 
-const sessionService = new SessionService();
-
-class SessionController {
-
-  async register(req, res) {
+export async function login(req, res) {
     try {
-      return res.send({ status: "success", message: "User registered" });
+        const { email, password } = req.body;
+        const result = await userService.login(email, password);
+        
+        if(result && result.error) {
+            return apiResponser.errorResponse(res, result.error, 400);
+        }
+
+        req.session.user = {
+            name: `${result.first_name} ${result.last_name}`,
+            email: result.email,
+            age: result.age,
+            rol: result.role,
+            cart: result.cart
+        };
+
+        return apiResponser.successResponse(res, req.session.user);
+
     } catch (error) {
-      return res.status(400).send({ status: "error", error: error.message });
+        return apiResponser.errorResponse(res, error.message);
     }
-  }
+};
 
-  failRegister(req, res) {
-    console.log("Failed Register");
-    return res.send({ status: "error", error: "Authentication error" });
-  }
-
-  async login(req, res) {
-    const { email, password } = req.body;
-
+export async function failLogin(req, res) {
     try {
-      const user = await sessionService.getUser({ email });
-
-      if (!user) {
-        return res.status(401).send({ status: "error", error: "Invalid credentials" });
-      }
-
-      if (!sessionService.isValidPassword(user, password)) {
-        return res.status(401).send({ status: "error", error: "Invalid credentials" });
-      }
-
-      const jwtUser = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        cart: user.cart,
-      };
-
-      const token = jwt.sign(jwtUser, config.jwtSecret, { expiresIn: "24h" });
-
-      return res.cookie("jwtCookie", token, { httpOnly: true }).send({
-        status: "success",
-        message: "Login successful",
-      });
+        return apiResponser.errorResponse(res, `Credenciales inválidas`, 400);
     } catch (error) {
-      return res.status(500).send({ status: "error", error: "Internal server error" });
+        return apiResponser.errorResponse(res, error.message);
     }
-  }
+};
 
-  github(req, res) { 
-    const { code } = req.query;
-  }
+export async function register(req, res) {
+    try {
+        return apiResponser.successResponse(res, `Usuario registrado con éxito.`);
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
 
-  async githubCallback (req, res) {
-    const jwtUser = {
-      name: req.user.first_name,
-      email: req.user.email,
-      cart: req.user.cart,
-    };
+export async function failRegister(req, res) {
+    try {
+        return apiResponser.errorResponse(res, `El usuario ya se encuentra registrado.`);
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
 
-    const token = jwt.sign(jwtUser, config.jwtSecret, { expiresIn: "24h" });
+export async function logout(req, res) {
+    try {
+        req.session.destroy((error) => {
+            if(error) {
+                apiResponser.errorResponse(res, error);
+            } else {
+                res.redirect('/login');
+            }
+        });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
 
-    res.cookie("jwtCookie", token, { httpOnly: true }).redirect("/");
-  }
-  
+export async function current(req, res) {
+    try {
+        const getProfile = new GetProfile(req.session.user);
+        return apiResponser.successResponse(res, getProfile);
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
 
-  logout(req, res) {
-    return res.clearCookie("jwtCookie").send({ status: "success", message: "Logout successful" });
-  }
-}
+export async function github(req, res) {
+    try {
+        
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
 
-export default SessionController;
+export async function githubCallback(req, res) {
+    try {
+        req.session.user = {
+            name: `${req.user.first_name} ${req.user.last_name}`,
+            email: req.user.email,
+            age: req.user.age,
+            rol: req.user.role,
+            cart: req.user.cart
+        }
+        res.redirect("/products");
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};

@@ -1,25 +1,17 @@
-<div>
-  <h1>Login</h1>
-  <form id="loginForm">
-    <table>
-      <tr>
-        <td>Email</td>
-        <td><input name="email" /></td>
-      </tr>
-      <tr>
-        <td>Contraseña</td>
-        <td><input type="password" name="password" /></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input type="submit" value="Iniciar Sesión" /></td>
-      </tr>
-    </table>
+<div class="fluid d-flex flex-column justify-content-center align-items-center vh-100 vw-auto">
+  <form class="d-flex flex-column w-25 border border-2 border-primary rounded-3 p-4" id="loginForm">
+    <h1 class="m-2 text-center">Iniciar sesión</h1>
+    <div class="col form-group m-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+    </div>
+    <div class="col form-group m-3">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
+    </div>
+    <div class="d-grid m-3">
+      <input class="btn btn-primary" type="submit" value="Iniciar sesión" />
+    </div>
   </form>
-  <button onclick="location.href='/api/sessions/github'">Inicia Sesión con
-    GitHub</button>
-
-  <p>¿No estás registrado? <a href="/register">Regístrate aquí</a></p>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/login.js"></script>

@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <h1>Productos</h1>
+    <div class="d-flex flex-row justify-content-center flex-wrap align-items-center">
+        {{#each payload}}
+            <div class="card m-2" style="max-width: 20rem;">
+                <a href="/product/{{_id}}" style="text-decoration: none;" class="text-dark">
+                    <div class="card-header">
+                        {{#each thumbnails}}
+                            <img src="{{this}}" alt="product-image" class="card-img-top img-fluid">
+                        {{/each}}
+                    </div>
+                    <div class="card-body">
+                        <h4>
+                            {{this.title}}
+                        </h4>
+                        <p>{{this.description}}</p>
+                    </div>
+                </a>
+                <div class="card-footer">
+                    <h4>${{this.price}}</h4>
+                    <div class="d-flex flex-row flex-wrap justify-content-evenly align-items-center gap-4">
+                        <small class="text-muted">Stock: {{this.stock}}</small>
+                        {{#if @root.user}}
+                        <button class="btn btn-primary" onclick="addToCart('{{#if @root.user}}{{@root.user.cart}}{{/if}}', '{{this._id}}')">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+    {{#if hasPrevPage}}
+        <a href="/products?page={{prevPage}}">
+            <button class="btn btn-sm m-3 btn-primary">Página anterior</button>
+        </a>
+    {{/if}}
+
+    {{#if hasNextPage}}
+        <a href="/products?page={{nextPage}}">
+            <button class="btn btn-sm m-3 btn-primary">Página siguiente</button>
+        </a>
+    {{/if}}
+</div>
+<script src="js/index.js"></script>

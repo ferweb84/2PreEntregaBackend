@@ -1,33 +1,32 @@
 import { Server } from "socket.io";
-import MessageManager from "./dao/dbManagers/messages.js";
+import ProductManager from "./dao/dbManagers/productdbManager.js"
+
 
 const socket = {};
-//let messages = [];
 
-const messageManager = new MessageManager();
+socket.connect = (server) => {
+  const productManager = new ProductManager();
+  //const messageManager = new MessagesManager();
 
-socket.connect = (httpServer) => {
-  socket.io = new Server(httpServer);
+  socket.io = new Server(server);
 
   let { io } = socket;
 
-  io.on("connection", (socket) => {
-    console.log(`${socket.id} connected`);
+  io.on("connection", async (socket) => {
+    console.log(`Socket ${socket.id} is online!`);
 
-    // When an user sends a message, it is added to the db
-    socket.on("message", async (data) => {
-      // messages.push(data);
-      await messageManager.createMessage(data);
-      let messages = await messageManager.getMessages();
-      io.emit("messageLogs", messages);
-    });
+    const products = await productManager.getProducts();
+    io.emit("products", products);
 
-    socket.on("user-autenticated", async (data) => {
-      let messages = await messageManager.getMessages();
-      io.emit("messageLogs", messages);
-      socket.broadcast.emit("user-connected", data);
-    });
+    // socket.on("add-message", async (message) => {
+    //   await messageManager.saveMessage(message);
+    // });
+
+    // socket.on("user-auth", async (user) => {
+    //   if (user) {
+    //     socket.broadcast.emit("user-connected", user);
+    //   }
+    // });
   });
 };
-
-export default socket;
+export	default socket;

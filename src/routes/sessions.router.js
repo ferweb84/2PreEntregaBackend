@@ -1,43 +1,42 @@
 import { Router } from "express";
-import SessionManager from "../dao/dbManagers/sessions.js";
-import { isValidPassword } from "../utils.js";
-import config from "../config/config.js";
 import passport from "passport";
-import jwt from "jsonwebtoken";
-import SessionController from "../controllers/sessions.controller.js";
+import { authentication } from "../../middlewares/authentication.js";
+import { current, failLogin, failRegister, github, githubCallback, login, logout, register } from "../controllers/sessions.controller.js";
+import { authorize } from "../../middlewares/authorization.js";
+
 
 const router = Router();
 
-const sessionController = new SessionController();
+router.post(
+    '/login',
+    passport.authenticate('login', { failureRedirect: '/api/sessions/failLogin' }),
+    login
+);
+
+router.get("/failLogin", failLogin);
 
 router.post(
-  "/register",
-  passport.authenticate("register", {
-    session: false,
-    failureRedirect: "/api/sessions/failRegister",
-  }),
-  sessionController.register
-);
+    "/register", 
+    passport.authenticate("register", 
+    { failureRedirect: "/api/sessions/failRegister" }
+    ), register);
 
-router.get("/failRegister",sessionController.failRegister);
+router.get("/failRegister", failRegister);
 
-router.post("/login",sessionController.login);
+router.post("/logout", logout);
 
-router.get(
-  "/github",passport.authenticate("github", { scope: ["user:email"] }),
-  sessionController.github
-);
+router.get("/current", authentication(), authorize(['user']), current);
 
 router.get(
-  "/githubcallback",
-  passport.authenticate("github", {
-    session: false,
-    failureRedirect: "/login",
-  }),
-  sessionController.githubCallback
-
+    "/github", 
+    passport.authenticate("github", {scope: ["user:email"]}),
+    github
 );
 
-router.post("/logout", sessionController.logout);
+router.get(
+    "/githubcallback",
+    passport.authenticate("github", {failureRedirect: "/login"}),
+    githubCallback
+);
 
 export default router;

@@ -15,6 +15,7 @@
     "nodemon": "^2.0.22"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "autoprefixer": "^10.4.14",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
@@ -31,6 +32,7 @@
     "mongoose-paginate-v2": "^1.7.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.3",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
@@ -41,6 +43,8 @@
     "session-file-store": "^1.5.0",
     "socket.io": "^4.6.1",
     "sweetalert2": "^11.4.8",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "twilio": "^4.11.2",
+    "winston": "^3.9.0"
   }
 }

@@ -1,6 +1,8 @@
 import { userRepository } from "../repositories/user.repository.js";
 import { cartService } from "./cart.service.js";
 import { isValidPassword, createHash } from "../utils.js";
+import CustomError from "../../errors/CustomError.js";
+import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
 
 class UserService {
     constructor(){
@@ -11,11 +13,19 @@ class UserService {
         try {
             const user = await this.userRepository.findByEmail(email);
             if(!user) {
-                return { error: 'No se encontró el usuario.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE,
+                });
             }
             const validPassword = isValidPassword(user, password);
             if(!validPassword) {
-                return { error: 'Credenciales incorrectas.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.INVALID_CREDENTIALS_MESSAGE,
+                    cause: ErrorsCause.INVALID_CREDENTIALS_CAUSE,
+                });
             } else {
                 delete user.password;
                 return user;
@@ -29,7 +39,11 @@ class UserService {
         try {
             const userExists = await this.userRepository.findByEmail(user.email);
             if(userExists) {
-                return { error: 'El usuario ya se encuentra registrado.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.ALREADY_EXISTS_MESSAGE,
+                    cause: ErrorsCause.ALREADY_EXISTS_CAUSE,
+                });
             }
             
             return this.userRepository.createUser(user);
@@ -67,7 +81,15 @@ class UserService {
 
     findById = async (id) => {
         try {
-            return await this.userRepository.findById(id);
+            const user = await this.userRepository.findById(id);
+            if(!user) {
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE,
+                });
+            }
+            return user;
         } catch (error) {
             throw new Error(error);
         }

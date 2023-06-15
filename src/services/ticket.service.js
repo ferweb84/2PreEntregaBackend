@@ -3,6 +3,8 @@ import { cartRepository } from './../repositories/cart.repository.js';
 import { v4 as uuid4 } from 'uuid';
 import { userRepository } from '../repositories/user.repository.js';
 import { productRepository } from '../repositories/products.repository.js';
+import CustomError from '../../errors/CustomError.js';
+import { ErrorsCause,ErrorsName,ErrorsMessage } from '../../errors/error.enum.js';
 
 class TicketService {
     constructor(){
@@ -18,12 +20,20 @@ class TicketService {
             const user = await this.userRepository.findByCartId(cartId);
             if(!cart)
             {
-                return {error: `No se encontró el carrito.`}
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.CART_NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.CART_NOT_FOUND_CAUSE
+                });
             }
 
             if(!user)
             {
-                return {error: `No se encontró el usuario.`}
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.USER_NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.USER_NOT_FOUND_CAUSE
+                });
             }
 
             let totalAmmount = 0;
@@ -84,9 +94,11 @@ class TicketService {
             }
 
             if(ticket.successProducts.length <= 0) {
-                return {
-                    error: `El carrito está vacío.`
-                }
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.EMPTY_CART_MESSAGE,
+                    cause: ErrorsCause.USER_NOT_FOUND_CAUSE
+                });
             }
 
             const createdTicket = await this.ticketRepository.create(ticket);
@@ -107,7 +119,11 @@ class TicketService {
             if(createdTicket) {
                 return ticket;
             } else {
-                return {error: `No se pudo crear el ticket`};
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.CANNOT_CREATE_TICKET_MESSAGE,
+                    cause: ErrorsCause.CANNOT_CREATE_TICKET_CAUSE
+                });
             }
         } catch (error) {
             throw new Error(error);

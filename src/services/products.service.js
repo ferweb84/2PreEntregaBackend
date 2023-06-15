@@ -1,4 +1,6 @@
 import { productRepository } from "../repositories/products.repository.js";
+import CustomError from "../../errors/CustomError.js";
+import { ErrorsCause,ErrorsMessage,ErrorsName } from "../../errors/error.enum.js";
 
 class ProductService {
     constructor(){
@@ -17,7 +19,11 @@ class ProductService {
         try {
             const result = await this.productRepository.findOne(id);
             if(!result) {
-                return { error: 'Producto no encontrado.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
             return result;
         } catch (error) {
@@ -36,12 +42,20 @@ class ProductService {
                 product.stock === undefined ||
                 !product.category
             ) {
-                return { error: 'Debes ingresar todos los campos para crear el producto.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.MISSING_FIELDS_MESSAGE,
+                    cause: ErrorsCause.MISSING_FIELDS_CAUSE
+                });
             }
 
             const existingProduct = await this.productRepository.findByCode(product.code);
             if (existingProduct) {
-                return { error: `El código ingresado ya existe.` };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.CODE_ALREADY_EXIST_MESSAGE,
+                    cause: ErrorsCause.CODE_ALREADY_EXIST_CAUSE,
+                });
             }
 
             return await this.productRepository.addProduct(product);
@@ -55,7 +69,11 @@ class ProductService {
         try {
             const productExists = await productRepository.findOne(id);
             if(!productExists) {
-                return { error: 'Producto no encontrado.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
 
             if (
@@ -67,12 +85,20 @@ class ProductService {
                 product.stock === undefined ||
                 !product.category
             ) {
-            return { error: "Debes ingresar todos los campos para actualizar el producto." };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.MISSING_FIELDS_MESSAGE,
+                    cause: ErrorsCause.MISSING_FIELDS_CAUSE
+                });
             }
 
             const existingProduct = await this.productRepository.findByCode(product.code);
             if (existingProduct) {
-                return { error: `El código ingresado ya existe.` };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.CODE_ALREADY_EXIST_MESSAGE,
+                    cause: ErrorsCause.CODE_ALREADY_EXIST_CAUSE,
+                });
             }
 
             return await productRepository.updateProduct(id, product);
@@ -85,9 +111,12 @@ class ProductService {
         try {
             const existingProduct = productRepository.findOne(id);
             if(!existingProduct) {
-                return { error: 'Producto no encontrado.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
-
             return await productRepository.deleteProduct(id);
         } catch (error) {
             throw new Error(error);

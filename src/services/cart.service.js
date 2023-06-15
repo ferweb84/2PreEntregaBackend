@@ -3,6 +3,8 @@ import { productRepository } from "../repositories/products.repository.js";
 import { ticketRepository } from "../repositories/ticket.respository.js";
 import { userRepository } from "../repositories/user.repository.js";
 import { v4 as uuid4 } from 'uuid';
+import CustomError from "../../errors/CustomError.js";
+import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
 
 class CartService {
     constructor(){
@@ -24,7 +26,11 @@ class CartService {
         try {
             const result = await this.cartRepository.findOne(id);
             if(!result) {
-                return { error: 'Carrito no encontrado.' };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
             return result;
         } catch (error) {
@@ -45,13 +51,19 @@ class CartService {
             const cart = await this.cartRepository.findOne(id);
             const parsedQuantity = Number(quantity);
             if (isNaN(parsedQuantity)) {
-                return { error: `La cantidad ingresada no es válida.` };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.QUANTITY_NOT_VALID_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
-
             if (!cart) {
-                return { error: `No se encontró el carrito.` };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
-
             const existingProductIndex = cart.products.findIndex(
                 (product) => product.product && product.product._id.toString() === productId
             );  
@@ -74,7 +86,11 @@ class CartService {
         try {
           const cart = await this.cartRepository.findOne(id);
           if (!cart) {
-            return { error: `No se encontró el carrito.` };
+            CustomError.generateCustomError({
+                name: ErrorsName.GENERAL_ERROR_NAME,
+                message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                cause: ErrorsCause.NOT_FOUND_CAUSE
+            });
           }
       
           cart.products = cart.products.filter(
@@ -92,7 +108,11 @@ class CartService {
         try {
             const cart = await this.cartRepository.findOne(id);
             if(!cart) {
-                return {error: `No se encontró el carrito.`};
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
             cart.products = [];
             return await this.cartRepository.saveCart(cart);
@@ -105,7 +125,11 @@ class CartService {
         try {
             const cart = await this.cartRepository.findOne(id);
             if(!cart) {
-                return {error: `No se encontró el carrito.`};
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
             cart.products = products;
             return await this.cartRepository.saveCart(cart);
@@ -119,12 +143,20 @@ class CartService {
         try {
             const cart = await this.cartRepository.findOne(id);
             if(!cart) {
-                return { error: `No se encontró el carrito.`};
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE
+                });
             }
 
             const item = cart.products.find((product) => product.product._id.toString() === productId.toString());
             if (!item) {
-                return { error: `Producto con ID ${productId} no encontrado en el carrito` };
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.PRODUCT_NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.PRODUCT_NOT_FOUND_CAUSE
+                });
             }
             
             item.quantity = quantity;

@@ -1,5 +1,8 @@
 import { productService } from "../services/products.service.js";
 import { apiResponser } from "../traits/ApiResponser.js";
+import CustomError from "../../errors/CustomError.js";
+import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
+import { generateProducts } from "../../mocks/products.mock.js";
 const URL = "http://localhost:8080/images/";
 
 export async function findAll (req, res) {
@@ -66,7 +69,11 @@ export async function createProduct(req, res) {
     const thumbnails = req.files ? req.files.map(file => `${URL}${file.filename}`) : null;
 
     if (!thumbnails || thumbnails.length === 0) {
-      return apiResponser.errorResponse(res, `No se cargaron imágenes.`, 400);
+      CustomError.generateCustomError({
+        name: ErrorsName.GENERAL_ERROR_NAME,
+        message: ErrorsMessage.THUMBNAIL_NOT_UPLOADED_MESSAGE,
+        cause: ErrorsCause.THUMBNAIL_NOT_UPLOADED_CAUSE
+      });
     }
 
     product.thumbnails = thumbnails;
@@ -76,7 +83,7 @@ export async function createProduct(req, res) {
       return apiResponser.errorResponse(res, result.error, 400);
     }
 
-    return apiResponser.successResponse(res, `Producto creado`);
+    return apiResponser.successResponse(res, result);
 
   } catch (error) {
     return apiResponser.errorResponse(res, error.message);
@@ -114,4 +121,16 @@ export async function deleteProduct(req, res) {
   } catch (error) {
     return apiResponser.errorResponse(res, error.message);
   }
-}
+};
+
+export function mockingProducts(req, res) {
+  try {
+    let products = [];
+    for(let i=0; i<100; i++) {
+      products.push(generateProducts());
+    }
+    return apiResponser.successResponse(res, products);
+  } catch (error) {
+    return apiResponser.errorResponse(res, error.message);
+  }
+};

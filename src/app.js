@@ -12,6 +12,7 @@ import sessionRouter from './routes/sessions.router.js';
 import config from "./config.js";
 import initializePassport from "./auth/passport.js";
 import passport from "passport";
+import { errorMiddleware } from "../middlewares/error.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ const httpServer = app.listen(8080, () => {
 });
 
 database.connect();
+app.use(errorMiddleware);
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);

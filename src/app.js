@@ -17,7 +17,8 @@ import { routerApi } from "./routes/index.js";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
 import usersRouter from "./routes/users.router.js";
-import {addLogger} from "./utils/logger.js";
+// import compression from "express-compression";
+// import {addLogger} from "./utils/logger.js";
 
 
 
@@ -63,9 +64,6 @@ app.get("/sms", async (req,res)=>{
   res.send({status:"success", message:"sms sent"});
 });
 
-
-
-
 // Settings
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
@@ -78,9 +76,10 @@ app.use("/", express.static(`${__dirname}/public`));
 app.use(morgan("dev"));
 app.use(cors({origin: "http://127.0.0.1:5500", methods: ["GET","POST","PUT"]}));
 app.use(cookieParser());
+// app.use(compression({brotli:{enabled:true, zlib:{}}}));
 initializePassport();
 app.use(passport.initialize());
-app.use(addLogger);
+// app.use(addLogger);
 
 // Database connection
 database.connect();
@@ -100,9 +99,9 @@ app.listen(port, () => {
 });
 
 //winston
-app.get("/winston", (req,res) => {
-  logger.http("Peticion en endopint de prueba");
-  res.send ({message: "Esta es na prueba"});
-});
+// app.get("/winston", (req,res) => {
+//   logger.http("Peticion en endopint de prueba");
+//   res.send ({message: "Esta es na prueba"});
+// });
 
 // socket.connect(httpServer);

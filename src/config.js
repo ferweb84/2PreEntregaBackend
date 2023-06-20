@@ -7,6 +7,8 @@ const config = {
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackUrl: process.env.CALLBACK_URL,
+    port: process.env.PORT,
+    developmentMode: process.env.DEV_MODE
 };
 
 export default config;

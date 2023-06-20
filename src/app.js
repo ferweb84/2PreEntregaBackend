@@ -13,6 +13,8 @@ import config from "./config.js";
 import initializePassport from "./auth/passport.js";
 import passport from "passport";
 import { errorMiddleware } from "../middlewares/error.js";
+import { loggerMiddleware } from "../middlewares/logger.js";
+import { logger } from "./logger.js";
 
 const app = express();
 
@@ -35,8 +37,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 initializePassport();
 
-const httpServer = app.listen(8080, () => {
-    console.log(`Server runing at port 8080`);
+app.listen(config.port, () => {
+    logger.debug(`Server runing at port ${config.port}`);
 });
 
 database.connect();
@@ -50,3 +52,14 @@ app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
+
+app.get("/loggerTest", (req, res) => {
+    logger.debug("This is a debug log");
+    logger.http("This is an HTTP log");
+    logger.info("This is an info log");
+    logger.warning("This is a warning log");
+    logger.error("This is an error log");
+    logger.fatal("This is a fatal log");
+
+    res.send("Logger test completed");
+});

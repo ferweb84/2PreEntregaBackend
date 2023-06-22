@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use("/", express.static(`${__dirname}/public`));
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(loggerMiddleware);
 
 app.use(session({
@@ -63,4 +63,20 @@ app.get("/loggerTest", (req, res) => {
     logger.fatal("This is a fatal log");
 
     res.send("Logger test completed");
+});
+
+app.get('/operacionsencilla', (req,res)=>{
+    let sum = 0;
+    for (let i =0 ; i< 1000000; i++) {
+        sum += i
+    }
+    res.send({sum});
+});
+
+app.get('/operacioncompleja', (req,res)=>{
+    let sum = 0;
+    for (let i =0 ; i< 5e8; i++) {
+        sum += i
+    }
+    res.send({sum});
 });

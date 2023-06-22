@@ -13,8 +13,10 @@ import config from "./config.js";
 import initializePassport from "./auth/passport.js";
 import passport from "passport";
 import { errorMiddleware } from "../middlewares/error.js";
+import {ErrorsName,ErrorsMessage,ErrorsCause,} from "../errors/error.enum.js"
 import { loggerMiddleware } from "../middlewares/logger.js";
 import { logger } from "./logger.js";
+import CustomError from "../errors/CustomError.js";
 
 const app = express();
 
@@ -43,7 +45,7 @@ app.listen(config.port, () => {
 });
 
 database.connect();
-app.use(errorMiddleware);
+
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
@@ -53,6 +55,22 @@ app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
+
+app.get("/users",(req,res)=>{
+    CustomError.generateCustomError({
+        name:ErrorsName.GENERAL_ERROR_NAME,
+        message:ErrorsMessage.AUTHENTICATION_ERROR_MESSAGE,
+        cause:ErrorsCause.AUTHENTICATION_ERROR_CAUSE,
+    });
+});
+app.get("/productsError",(req,res)=>{
+    CustomError.generateCustomError({
+        name:ErrorsName.GENERAL_ERROR_NAME,
+        message:ErrorsMessage.PRODUCT_NOT_FOUND_MESSAGE,
+        cause:ErrorsCause.PRODUCT_NOT_FOUND_CAUSE,
+    });
+})
+app.use(errorMiddleware);
 
 app.get("/loggerTest", (req, res) => {
     logger.debug("This is a debug log");
@@ -80,3 +98,4 @@ app.get('/operacioncompleja', (req,res)=>{
     }
     res.send({sum});
 });
+

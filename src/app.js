@@ -18,6 +18,7 @@ import { loggerMiddleware } from "../middlewares/logger.js";
 import { logger } from "./logger.js";
 import CustomError from "../errors/CustomError.js";
 
+
 const app = express();
 
 app.use(express.json());
@@ -55,6 +56,10 @@ app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
+
+app.get("/mockingproducts",(req,res)=>{
+    res.send("mocking");
+});
 
 app.get("/users",(req,res)=>{
     CustomError.generateCustomError({
@@ -99,3 +104,4 @@ app.get('/operacioncompleja', (req,res)=>{
     res.send({sum});
 });
 
+  

@@ -12,7 +12,7 @@ const customLevel = {
         fatal: 5
     },
     colors: {
-        debug: "white",
+        debug: "grey",
         http: "green",
         info: "blue",
         warning: "yellow",
@@ -45,7 +45,7 @@ const productionLogger = winston.createLogger({
             )
         }),
         new winston.transports.File({
-            filename: `${__dirname}/../logs/errors.log`,
+            filename: './errors.log',
             level: "info",
             format: winston.format.simple(),
         }),

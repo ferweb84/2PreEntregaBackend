@@ -35,6 +35,10 @@ export async function failLogin(req, res) {
 };
 
 export async function register(req, res) {
+    
+    const {first_name, last_name, email,password} =req.body;
+    console.log(`Registering ${first_name} ${last_name}email:${email}and pwd:${password}`)
+    
     try {
         return apiResponser.successResponse(res, `Usuario registrado con éxito.`);
     } catch (error) {

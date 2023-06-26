@@ -17,6 +17,7 @@ import {ErrorsName,ErrorsMessage,ErrorsCause,} from "../errors/error.enum.js"
 import { loggerMiddleware } from "../middlewares/logger.js";
 import { logger } from "./logger.js";
 import CustomError from "../errors/CustomError.js";
+import { faker } from "@faker-js/faker";
 
 
 const app = express();
@@ -104,4 +105,11 @@ app.get('/operacioncompleja', (req,res)=>{
     res.send({sum});
 });
 
-  
+app.get('/api/test/user', (req,res)=>{
+    let first_name = faker.name.firstName();
+    let last_name = faker.name.lastName();
+    let email =faker.internet.email();
+    let password = faker.internet.password();
+    res.send({first_name,last_name,email,password})
+})
+

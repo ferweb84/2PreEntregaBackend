@@ -17,8 +17,7 @@ import {ErrorsName,ErrorsMessage,ErrorsCause,} from "../errors/error.enum.js"
 import { loggerMiddleware } from "../middlewares/logger.js";
 import { logger } from "./logger.js";
 import CustomError from "../errors/CustomError.js";
-import { faker } from "@faker-js/faker";
-
+import mockRouter from "./routes/mocking.router.js";
 
 const app = express();
 
@@ -48,7 +47,7 @@ app.listen(config.port, () => {
 
 database.connect();
 
-
+app.get("/mockingproducts", mockRouter);
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
@@ -58,9 +57,8 @@ app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
 
-app.get("/mockingproducts",(req,res)=>{
-    res.send("mocking");
-});
+
+
 
 app.get("/users",(req,res)=>{
     CustomError.generateCustomError({

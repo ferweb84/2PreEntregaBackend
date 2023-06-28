@@ -2,7 +2,8 @@ import { productService } from "../services/products.service.js";
 import { apiResponser } from "../traits/ApiResponser.js";
 import CustomError from "../../errors/CustomError.js";
 import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
-import { generateProducts } from "../../mocks/products.mock.js";
+
+
 const URL = "http://localhost:8080/images/";
 
 export async function findAll (req, res) {
@@ -53,8 +54,8 @@ export async function findOne(req, res) {
     try {
         const { productId } = req.params;
         const result = await productService.findOne(productId);
-        if(result && result.error) {
-            return apiResponser.errorResponse(res, result.error, 400);
+        if(result && result.errors) {
+            return apiResponser.errorResponse(res, result.errors, 400);
         }
 
         return apiResponser.successResponse(res, result);
@@ -79,8 +80,8 @@ export async function createProduct(req, res) {
     product.thumbnails = thumbnails;
 
     const result = await productService.addProduct(product);
-    if (result && result.error) {
-      return apiResponser.errorResponse(res, result.error, 400);
+    if (result && result.errors) {
+      return apiResponser.errorResponse(res, result.errors, 400);
     }
 
     return apiResponser.successResponse(res, result);
@@ -118,18 +119,6 @@ export async function deleteProduct(req, res) {
 
     return apiResponser.successResponse(res, `Producto eliminado`);
 
-  } catch (error) {
-    return apiResponser.errorResponse(res, error.message);
-  }
-};
-
-export function mockingProducts(req, res) {
-  try {
-    let products = [];
-    for(let i=0; i<100; i++) {
-      products.push(generateProducts());
-    }
-    return apiResponser.successResponse(res, products);
   } catch (error) {
     return apiResponser.errorResponse(res, error.message);
   }

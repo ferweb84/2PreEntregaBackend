@@ -1,5 +1,5 @@
 # Crea un contenedor de node
-FROM node
+FROM node:alpine
 
 # Crea la carpeta "app"
 WORKDIR /app

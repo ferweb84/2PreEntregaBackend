@@ -1,10 +1,11 @@
-import { userRepository } from "../repositories/user.repository.js";
-import { cartService } from "./cart.service.js";
+import { userRepository } from "../repositories/index.js";
+import { cartService } from "../services/index.js";
 import { isValidPassword, createHash } from "../utils.js";
 import CustomError from "../../errors/CustomError.js";
-import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
+import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/enums/user.error.enum.js";
 
-class UserService {
+
+export class UserService {
     constructor(){
         this.userRepository = userRepository;
     }
@@ -94,6 +95,33 @@ class UserService {
             throw new Error(error);
         }
     };
+
+    changeRole = async (userId) => {
+        try {
+            const user = await this.repository.findById(userId);
+            if(!user) {
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.NOT_FOUND_CAUSE,
+                });
+            }
+            const role = user.role === 'user' ? user.role = 'premium' : 'user';
+            const data = await this.repository.changeRole(user._id, role);
+            const response = {
+                _id: data._id,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                email: data.email,
+                age: data.age,
+                role: data.role,
+                cart: data.cart
+            };
+            return response;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
 
-export const userService = new UserService();
+

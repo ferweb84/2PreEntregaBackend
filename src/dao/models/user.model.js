@@ -13,7 +13,8 @@ const userSchema = mongoose.Schema({
     password: String,
     role: {
         type: String,
-        default: "user"
+        default: "user",
+        emun: ['user', 'admin', 'premium']
     },
     cart: {
         type: mongoose.Schema.Types.ObjectId,

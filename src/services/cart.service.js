@@ -1,12 +1,8 @@
-import { cartRepository } from "../repositories/cart.repository.js";
-import { productRepository } from "../repositories/products.repository.js";
-import { ticketRepository } from "../repositories/ticket.respository.js";
-import { userRepository } from "../repositories/user.repository.js";
-import { v4 as uuid4 } from 'uuid';
 import CustomError from "../../errors/CustomError.js";
 import { ErrorsCause, ErrorsMessage, ErrorsName } from "../../errors/error.enum.js";
+import { cartRepository, productRepository, ticketRepository, userRepository } from "../repositories/index.js";
 
-class CartService {
+export class CartService {
     constructor(){
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
@@ -46,7 +42,7 @@ class CartService {
         }
     };
 
-    addProductToCart = async (id, productId, quantity = 1) => {
+    addProductToCart = async (id, productId, quantity = 1, userId) => {
         try {
             const cart = await this.cartRepository.findOne(id);
             const parsedQuantity = Number(quantity);
@@ -64,6 +60,25 @@ class CartService {
                     cause: ErrorsCause.NOT_FOUND_CAUSE
                 });
             }
+
+            const user = await this.userRepository.findById(userId);
+
+            if(!user) { 
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.USER_NOT_FOUND_MESSAGE,
+                    cause: ErrorsCause.USER_NOT_FOUND_CAUSE
+                });
+            }
+
+            if(user.cart.toString() !== cart._id.toString()) {
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.USER_NOT_OWNER_OF_CART_MESSAGE,
+                    cause: ErrorsCause.USER_NOT_OWNER_OF_CART_CAUSE
+                });
+            }
+            
             const existingProductIndex = cart.products.findIndex(
                 (product) => product.product && product.product._id.toString() === productId
             );  

@@ -6,9 +6,6 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         unique: true,
     },
-    // purchase_datetime: {
-    //     type: String
-    // },
     amount: {
         type: Number,
     },
@@ -17,7 +14,9 @@ const ticketSchema = new mongoose.Schema({
     },
     created_at: {
         type: String
-    }
+    },
 });
 
-export const ticketModel = mongoose.model(ticketCollection, ticketSchema);
+const ticketModel = mongoose.model(ticketCollection, ticketSchema);
+
+export { ticketModel };

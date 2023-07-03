@@ -1,17 +1,18 @@
 import { GetProfile } from "../dao/dtos/getProfile.js";
-import { userService } from "../services/user.service.js";
+import { userService } from "../services/index.js";
 import { apiResponser } from "../traits/ApiResponser.js";
+import { generateToken } from "../utils.js"
+import config from "../config.js"
+
+const {jwt: { cookie } } = config;
 
 export async function login(req, res) {
     try {
         const { email, password } = req.body;
         const result = await userService.login(email, password);
         
-        if(result && result.error) {
-            return apiResponser.errorResponse(res, result.error, 400);
-        }
-
         req.session.user = {
+            id: result._id,
             name: `${result.first_name} ${result.last_name}`,
             email: result.email,
             age: result.age,
@@ -36,8 +37,8 @@ export async function failLogin(req, res) {
 
 export async function register(req, res) {
     
-    const {first_name, last_name, email,password} =req.body;
-    console.log(`Registering ${first_name} ${last_name}email:${email}and pwd:${password}`)
+    // const {first_name, last_name, email,password} =req.body;
+    // console.log(`Registering ${first_name} ${last_name}email:${email}and pwd:${password}`)
     
     try {
         return apiResponser.successResponse(res, `Usuario registrado con éxito.`);
@@ -56,6 +57,7 @@ export async function failRegister(req, res) {
 
 export async function logout(req, res) {
     try {
+        res.clearCookie(cookie);
         req.session.destroy((error) => {
             if(error) {
                 apiResponser.errorResponse(res, error);

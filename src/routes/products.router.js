@@ -4,14 +4,15 @@ import { uploader } from './../utils.js';
 import __dirname from "./../utils.js";
 import { authentication } from "../../middlewares/authentication.js";
 import { authorize } from "../../middlewares/authorization.js";
-import { findAll, findOne, createProduct, updateProduct, deleteProduct } from './../controllers/product.controller.js';
+import { findAll, findOne, createProduct, updateProduct, deleteProduct, } from './../controllers/product.controller.js';
 
 const router = Router();
 
 router.get('/', findAll);
 router.get('/:productId', findOne);
-router.post('/', authentication(), authorize(['admin']), uploader.array('thumbnails'), createProduct);
-router.put('/:productId', authentication(), authorize(['admin']), updateProduct);
-router.delete('/:productId', authentication(), authorize(['admin']), deleteProduct);
+router.post('/', authentication(), authorize(['admin', 'premium']), uploader.array('thumbnails'), createProduct);
+router.put('/:productId', authentication(), authorize(['admin', 'premium']), updateProduct);
+router.delete('/:productId', authentication(), authorize(['admin', 'premium']), deleteProduct);
+// router.post("/mockingproducts", mockingProducts);
 
 export default router;

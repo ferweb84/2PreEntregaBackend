@@ -9,6 +9,8 @@ import viewsRouter from './routes/views.router.js';
 import productRouter from './routes/products.router.js';
 import cartRouter from './routes/carts.router.js';
 import sessionRouter from './routes/sessions.router.js';
+import restoreRouter from './routes/restore.router.js';
+import userRouter from './routes/user.router.js';
 import config from "./config.js";
 import initializePassport from "./auth/passport.js";
 import passport from "passport";
@@ -16,6 +18,7 @@ import { errorMiddleware } from "../middlewares/error.js";
 import {ErrorsName,ErrorsMessage,ErrorsCause,} from "../errors/error.enum.js"
 import { loggerMiddleware } from "../middlewares/logger.js";
 import { logger } from "./logger.js";
+import cookieParser from "cookie-parser";
 import CustomError from "../errors/CustomError.js";
 import mockRouter from "./routes/mocking.router.js";
 import cluster from 'cluster';
@@ -43,36 +46,40 @@ app.use(express.urlencoded({extended: true}));
 app.use("/", express.static(`${__dirname}/public`));
 // app.use(morgan("dev"));
 app.use(loggerMiddleware);
+app.use(cookieParser());
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: config.dbUrl,
-        ttl: 120,
+        mongoUrl: config.mongo.dbUrl,
+        ttl: 280,
     }),
     resave: true,
     saveUninitialized: false,
-    secret: config.sessionSecret
+    secret: config.session.sessionSecret
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 initializePassport();
 
-app.listen(config.port, () => {
-    logger.debug(`Server runing at port ${config.port}`);
+app.listen(config.server.port, () => {
+    logger.debug(`Server runing at port ${config.server.port}`);
 });
 
 database.connect();
+app.use(errorMiddleware);
 
 app.get("/mockingproducts", mockRouter);
 app.engine("handlebars", handlebars.engine());
-app.set("views", `${__dirname}/views`);
+app.set("views", `${__dirname}/../views`);
 app.set("view engine", "handlebars");
 
 app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/restore", restoreRouter);
+app.use("/api/users", userRouter);
 
 
 

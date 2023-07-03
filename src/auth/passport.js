@@ -1,18 +1,41 @@
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
-import { userModel } from "../dao/models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
 import config from "../config.js";
 import local from "passport-local";
-import { cartModel } from "../dao/models/cart.model.js";
-const { clientID, clientSecret, callbackUrl } = config;
+import jwt, { ExtractJwt } from "passport-jwt"
+
+const { 
+    github: { clientID, clientSecret, callbackUrl },
+    session: { sessionSecret },
+    jwt: { cookie },
+} = config;
 const LocalStrategy = local.Strategy;
 
-// Services
-import { userService } from "../services/user.service.js";
-import { cartService } from "../services/cart.service.js";
+import { cartService, userService } from "./../services/index.js";
+
+const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) {
+      token = req.cookies[cookie];
+    }
+    return token;
+};
 
 const initializePassport = () => {
+    passport.use(
+        "current",
+        new jwt.Strategy({
+            secretOrKey: sessionSecret,
+            jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor])
+        }, async (jwt_payload, done) => {
+            try {
+                return done(null, jwt_payload);
+            } catch (error) {
+                return done(error);
+            }
+        })
+    ),
     passport.use(
         "github",
         new GitHubStrategy({

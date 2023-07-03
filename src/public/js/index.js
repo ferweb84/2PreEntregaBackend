@@ -7,7 +7,11 @@ const addToCart = async (cartId, productId) => {
       })
       .then((cart) => cart.json())
       .then((data) => {
-          alertify.alert('Listo!', `Producto agregado al carrito.`, function(){ alertify.success(`Producto agregado al carrito`); });
+          if(data.status === 'Error') {
+            alertify.alert('Error!', `Producto no añadido al carrito.`, function(){ alertify.error(`Producto no añadido al carrito.`); });
+          } else {
+            alertify.alert('Listo!', `Producto agregado al carrito.`, function(){ alertify.success(`Producto agregado al carrito`); });
+          }
       })
       .catch((error) => {
           console.log(error);

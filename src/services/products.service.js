@@ -1,10 +1,11 @@
-import { productRepository } from "../repositories/products.repository.js";
+import { productRepository, userRepository } from "../repositories/index.js";
 import CustomError from "../../errors/CustomError.js";
-import { ErrorsCause,ErrorsMessage,ErrorsName } from "../../errors/error.enum.js";
+import { ErrorsCause,ErrorsMessage,ErrorsName } from "../../errors/enums/product.error.enums.js";
 
-class ProductService {
+export class ProductService {
     constructor(){
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     findAll = async (page, filters = {}, options = {}) => {
@@ -31,7 +32,7 @@ class ProductService {
         }
     };
 
-    addProduct = async (product) => {
+    addProduct = async (product, userId) => {
         try {
             if (
                 !product.title ||
@@ -48,6 +49,18 @@ class ProductService {
                     cause: ErrorsCause.MISSING_FIELDS_CAUSE
                 });
             }
+            let owner = null;
+
+            if(userId) {
+                const user = await this.userRepository.findById(userId);
+                if(user.role === 'premium') {
+                    owner = user._id;
+                } else {
+                    owner = null;
+                }
+            }
+
+            product.owner = owner;
 
             const existingProduct = await this.productRepository.findByCode(product.code);
             if (existingProduct) {
@@ -65,7 +78,7 @@ class ProductService {
         }
     };
 
-    updateProduct = async (id, product) => {
+    updateProduct = async (id, product, userId) => {
         try {
             const productExists = await productRepository.findOne(id);
             if(!productExists) {
@@ -100,6 +113,18 @@ class ProductService {
                     cause: ErrorsCause.CODE_ALREADY_EXIST_CAUSE,
                 });
             }
+            let owner = null;
+
+            if(userId) {
+                const user = await this.userRepository.findById(userId);
+                if(user.role === 'premium') {
+                    owner = user._id;
+                } else {
+                    owner = null;
+                }
+            }
+
+            product.owner = owner;
 
             return await productRepository.updateProduct(id, product);
         } catch (error) {
@@ -107,7 +132,7 @@ class ProductService {
         }
     };
 
-    deleteProduct = async (id) => {
+    deleteProduct = async (id, userId) => {
         try {
             const existingProduct = productRepository.findOne(id);
             if(!existingProduct) {
@@ -117,11 +142,27 @@ class ProductService {
                     cause: ErrorsCause.NOT_FOUND_CAUSE
                 });
             }
-            return await productRepository.deleteProduct(id);
+
+            if(userId) {
+                const user = await this.userRepository.findById(userId);
+                if(user.role === 'premium' && existingProduct.owner !== user._id) {
+                    CustomError.generateCustomError({
+                        name: ErrorsName.GENERAL_ERROR_NAME,
+                        message: ErrorsMessage.USER_NOT_OWNER_MESSAGE,
+                        cause: ErrorsCause.USER_NOT_OWNER_CAUSE,
+                    });
+                }
+            } else {
+                CustomError.generateCustomError({
+                    name: ErrorsName.GENERAL_ERROR_NAME,
+                    message: ErrorsMessage.NOT_GET_USER_ID_MESSAGE,
+                    cause: ErrorsCause.NOT_GET_USER_ID_CAUSE,
+                });
+            }
+
+            return await this.productRepository.deleteProduct(id);
         } catch (error) {
             throw new Error(error);
         }
     };
 }
-
-export const productService = new ProductService();

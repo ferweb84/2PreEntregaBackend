@@ -1,13 +1,13 @@
-import { user } from "../dao/dbManagers/index.js";
+import { userModel } from "./../models/user.model.js";
 
-export class UserRepository {
+export class User {
     constructor(){
-        this.manager = user;
+        this.model = userModel;
     }
 
     findByEmail = async (email) => {
         try {
-            return await this.manager.findByEmail(email);
+            return await this.model.findOne({email: email});
         } catch (error) {
             throw new Error(error);
         }
@@ -15,7 +15,7 @@ export class UserRepository {
 
     createUser = async(user) => {
         try {
-            return await this.manager.createUser(user);
+            return await this.model.create(user);
         } catch (error) {
             throw new Error(error);
         }
@@ -23,7 +23,7 @@ export class UserRepository {
 
     findById = async(id) => {
         try {
-            return await this.manager.findById(id);
+            return await this.model.findById(id);
         } catch (error) {
             throw new Error(error);
         }
@@ -31,7 +31,7 @@ export class UserRepository {
 
     findByCartId = async(cartId) => {
         try {
-            return await this.manager.findByCartId(cartId);
+            return await this.model.findOne({cart: cartId});
         } catch (error) {
             throw new Error(error);
         }
@@ -39,7 +39,7 @@ export class UserRepository {
 
     saveUser = async (user) => {
         try {
-            return await this.model.saveUser(user);
+            return await this.model.findOneAndUpdate({_id: user._id}, { $set: user });
         } catch (error) {
             throw new Error(error);
         }
@@ -47,12 +47,9 @@ export class UserRepository {
 
     changeRole = async (userId, role) => {
         try {
-            return await this.manager.changeRole(userId, role);
+            return await this.model.findOneAndUpdate({ _id: userId }, { role }, { new:true });
         } catch (error) {
-            throw new Error();
+            throw new Error(error);
         }
     }
 }
-
-
-export const userRepository = new UserRepository();

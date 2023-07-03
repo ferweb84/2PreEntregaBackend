@@ -1,13 +1,13 @@
-import { cart } from '../dao/dbManagers/index.js';
+import { cartModel } from "../models/cart.model.js";
 
-export class CartRepository {
-    constructor() {
-        this.manager = cart;
+export class Cart {
+    constructor(){
+        this.model = cartModel;
     }
 
     findAll = async () => {
        try {
-        return this.manager.findAll();
+        return this.model.find();
        } catch (error) {
         throw new Error(error);
        }
@@ -15,7 +15,7 @@ export class CartRepository {
 
     findOne = async (id) => {
         try {
-            return this.manager.findOne(id);
+            return this.model.findById(id);
         } catch (error) {
             throw new Error(error);
         }
@@ -23,7 +23,7 @@ export class CartRepository {
 
     createCart = async (cart) => {
         try {
-            return this.manager.createCart(cart);
+            return this.model.create(cart);
         } catch (error) {
             throw new Error(error);
         }
@@ -31,9 +31,10 @@ export class CartRepository {
 
     saveCart = async (cart) => {
         try {
-            return await this.manager.saveCart(cart);
+            return await this.model.findOneAndUpdate({_id: cart._id}, { $set: cart });
         } catch (error) {
             throw new Error(error);
         }
     }
+      
 }

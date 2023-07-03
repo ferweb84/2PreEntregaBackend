@@ -1,8 +1,6 @@
-import { productService } from "../services/products.service.js";
-import { cartService } from "../services/cart.service.js";
-import { ticketService } from "../services/ticket.service.js";
 import { apiResponser } from "../traits/ApiResponser.js";
 import { GetProfile } from "../dao/dtos/getProfile.js";
+import { productService, cartService, ticketService } from "../services/index.js";
 
 export async function home(req, res) {
     try {
@@ -90,9 +88,6 @@ export async function viewProduct(req, res) {
     try {
         const { productId } = req.params;
         const result = await productService.findOne(productId);
-        if(result && result.error) {
-            return apiResponser.errorResponse(res, result.error, 400);
-        }
         res.render('product', {
             product: JSON.parse(JSON.stringify(result)),
             user: req.session.user
@@ -152,6 +147,25 @@ export async function profile(req, res) {
     try {
         const getProfile = new GetProfile(req.session.user);
         res.render('profile', { user: getProfile });
+    } catch (error) {
+        return apiResponser.errorResponse(res, error.message);
+    }
+};
+
+export async function restorePassword(req, res) {
+    try {
+        const { token } = req.query;
+        
+        const restore = await restoreService.restorePassword(token);
+        if (!restore) {
+            return res.render('generateRestorePassword');
+        } else {
+            if(!token) {
+                return res.render('generateRestorePassword');
+            } else {
+                return res.render('restorePassword');
+            }
+        }
     } catch (error) {
         return apiResponser.errorResponse(res, error.message);
     }

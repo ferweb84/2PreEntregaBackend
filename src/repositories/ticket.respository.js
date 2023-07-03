@@ -1,17 +1,15 @@
-import { ticketModel } from '../dao/models/ticket.model.js';
+import { ticket } from "../dao/dbManagers/index.js"
 
-class TicketRepository {
+export class TicketRepository {
     constructor() {
-        this.model = ticketModel;
+        this.manager = ticket;
     }
 
     create = async (ticket) => {
         try {
-            return await this.model.create(ticket);
+            return await this.manager.create(ticket);
         } catch (error) {
             throw new Error(error);
         }
     };
 }
-
-export const ticketRepository = new TicketRepository();

@@ -1,31 +1,13 @@
-import { productModel } from '../dao/models/product.model.js';
+import { product } from "../dao/dbManagers/index.js";
 
-class ProductRepository {
+export class ProductRepository {
     constructor(){
-        this.model = productModel;
+        this.manager = product;
     }
 
     findAll = async (page, filters = {}, options = {}) => {
         try {
-          const { limit = 10 } = options;
-    
-          const query = {};
-    
-          if ('category' in filters) {
-            query.category = filters.category;
-          }
-    
-          if ('status' in filters) {
-            query.status = filters.status;
-          }
-    
-          const result = await productModel.paginate(query, {
-            ...options,
-            page: page,
-            limit: parseInt(limit),
-          });
-    
-          return result;
+          return await this.manager.getAll(page, filters, options);
         } catch (error) {
           throw new Error(error);
         }
@@ -33,7 +15,7 @@ class ProductRepository {
 
     findOne = async (id) => {
         try {
-          return await productModel.findById(id);
+          return await this.manager.findOne(id);
         } catch (error) {
           throw new Error(error);
         }
@@ -41,7 +23,7 @@ class ProductRepository {
 
     addProduct = async (product) => {
       try {
-        return await productModel.create(product);
+        return await this.manager.addProduct(product);
       } catch (error) {
         throw new Error(error);
       }
@@ -49,7 +31,7 @@ class ProductRepository {
 
     findByCode = async (code) => {
       try {
-        return await productModel.findOne({ code });
+        return await this.manager.findByCode(code);
       } catch (error) {
         throw new Error(error);
       }
@@ -57,7 +39,7 @@ class ProductRepository {
 
     updateProduct = async (id, product) => {
       try {
-        return await productModel.updateOne({_id: id}, product);
+        return await this.manager.updateProduct(id, product);
       } catch (error) {
         throw new Error(error);
       }
@@ -65,11 +47,17 @@ class ProductRepository {
 
     saveProduct = async (product) => {
       try {
-          return await product.save();
+          return await this.manager.saveProduct(product);
       } catch (error) {
           throw new Error(error);
       }
-  }
-}
+    }
 
-export const productRepository = new ProductRepository();
+    deleteProduct = async (productId) => {
+      try {
+        return await this.manager.deleteProduct(productId);
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+}

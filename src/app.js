@@ -21,23 +21,23 @@ import { logger } from "./logger.js";
 import cookieParser from "cookie-parser";
 import CustomError from "../errors/CustomError.js";
 import mockRouter from "./routes/mocking.router.js";
-import cluster from 'cluster';
-import { cpus } from "os";
+// import cluster from 'cluster';
+// import { cpus } from "os";
 
-const logicProcessors = cpus().length;
+// const logicProcessors = cpus().length;
 
-if(cluster.isPrimary){
-    console.log ("este es el proceso primario. voy a generar un proceso hijo");
+// if(cluster.isPrimary){
+//     console.log ("este es el proceso primario. voy a generar un proceso hijo");
 
-    for (let i=0; i<logicProcessors; i++) {
-        cluster.fork ();
-    }
+//     for (let i=0; i<logicProcessors; i++) {
+//         cluster.fork ();
+//     }
 
-    } else{
-       console.log ("soy un proceso hijo");
-       console.log ( `mucho gusto, soy el procesador ${process.pid}`);
-}
-console.log(cluster.isPrimary);
+//     } else{
+//        console.log ("soy un proceso hijo");
+//        console.log ( `mucho gusto, soy el procesador ${process.pid}`);
+// }
+// console.log(cluster.isPrimary);
 
 const app = express();
 

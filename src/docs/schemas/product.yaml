@@ -1,0 +1,63 @@
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        status:
+          type: integer
+        code:
+          type: integer
+        stock:
+          type: integer
+        category:
+          type: string
+        thumbnails:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+        __v:
+          type: integer
+    NewProduct:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        status:
+          type: integer
+        code:
+          type: string
+        stock:
+          type: integer
+        category:
+          type: string
+    UpdateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        status:
+          type: integer
+        code:
+          type: string
+        stock:
+          type: integer
+        category:
+          type: string

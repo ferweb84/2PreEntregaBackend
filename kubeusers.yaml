@@ -31,6 +31,6 @@ spec:
             - containerPort: 8080
           env: 
             - name: DB_URL
-              value:mongodb+srv://ferwebreyna:IauhoPO6IpHisqUq@cluster0.i602mg0.mongodb.net/test?retryWrites=true&w=majority
+              value:
           imagePullPolicy: Always
           

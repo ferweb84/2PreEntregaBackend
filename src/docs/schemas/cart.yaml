@@ -1,0 +1,32 @@
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del carrito
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartProduct'
+          description: Lista de productos en el carrito
+        __v:
+          type: integer
+          description: Versión del carrito
+        usedForTicket:
+          type: boolean
+          description: Indica si el carrito ha sido utilizado para generar un ticket
+
+    CartProduct:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del producto en el carrito
+        product:
+          $ref: '#/components/schemas/Product'
+          description: Detalles del producto
+        quantity:
+          type: integer
+          description: Cantidad del producto en el carrito

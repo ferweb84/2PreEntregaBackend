@@ -21,6 +21,7 @@ import { logger } from "./logger.js";
 import cookieParser from "cookie-parser";
 import CustomError from "../errors/CustomError.js";
 import mockRouter from "./routes/mocking.router.js";
+import { swaggerRoute } from "./swagger.js";
 // import cluster from 'cluster';
 // import { cpus } from "os";
 
@@ -80,6 +81,7 @@ app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/restore", restoreRouter);
 app.use("/api/users", userRouter);
+swaggerRoute(app);
 
 
 

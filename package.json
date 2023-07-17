@@ -7,13 +7,16 @@
   "scripts": {
     "start:dev": "nodemon ./src/app.js",
     "start": "nodemon ./src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*.test.js --timeout 10000",
+    "test:integration": "mocha test/integration/*.test.js ",
+    "test:supertest": "mocha test/supertest.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "artillery": "^2.0.0-34",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.22"
   },
   "dependencies": {
@@ -23,6 +26,7 @@
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "chai": "^4.3.7",
     "commander": "^10.0.1",
     "connect-mongo": "^5.0.0",
     "cookie-parser": "^1.4.6",
@@ -47,6 +51,7 @@
     "router": "^1.3.8",
     "session-file-store": "^1.5.0",
     "socket.io": "^4.6.1",
+    "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "sweetalert2": "^11.4.8",

@@ -5,10 +5,11 @@ import database from './db.js';
 import morgan from "morgan";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
 import viewsRouter from './routes/views.router.js';
 import productRouter from './routes/products.router.js';
 import cartRouter from './routes/carts.router.js';
-import sessionRouter from './routes/sessions.router.js';
+import sessionsRouter from './routes/sessions.router.js';
 import restoreRouter from './routes/restore.router.js';
 import userRouter from './routes/user.router.js';
 import config from "./config.js";
@@ -22,6 +23,10 @@ import cookieParser from "cookie-parser";
 import CustomError from "../errors/CustomError.js";
 import mockRouter from "./routes/mocking.router.js";
 import { swaggerRoute } from "./swagger.js";
+import { faker } from "@faker-js/faker";
+
+
+
 // import cluster from 'cluster';
 // import { cpus } from "os";
 
@@ -42,12 +47,14 @@ import { swaggerRoute } from "./swagger.js";
 
 const app = express();
 
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use("/", express.static(`${__dirname}/public`));
 // app.use(morgan("dev"));
 app.use(loggerMiddleware);
 app.use(cookieParser());
+
 
 app.use(session({
     store: MongoStore.create({
@@ -78,7 +85,7 @@ app.set("view engine", "handlebars");
 app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
-app.use("/api/sessions", sessionRouter);
+app.use("/api/sessions", sessionsRouter);
 app.use("/api/restore", restoreRouter);
 app.use("/api/users", userRouter);
 swaggerRoute(app);
@@ -130,8 +137,8 @@ app.get('/operacioncompleja', (req,res)=>{
 });
 
 app.get('/api/test/user', (req,res)=>{
-    let first_name = faker.name.firstName();
-    let last_name = faker.name.lastName();
+    let first_name = faker.person.firstName();
+    let last_name = faker.person.lastName();
     let email =faker.internet.email();
     let password = faker.internet.password();
     res.send({first_name,last_name,email,password})

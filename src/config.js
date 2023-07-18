@@ -4,6 +4,7 @@ dotenv.config();
 const config = {
     mongo: {
         dbUrl: process.env.DB_URL,
+        dbTestUrl: process.env.DB_TEST_URL
     },
     session: {
         sessionSecret: process.env.SESSION_SECRET,

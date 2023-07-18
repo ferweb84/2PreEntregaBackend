@@ -1,66 +1,83 @@
-import chai from "chai"
-import supertest from "supertest"
-import config from "../../src/config.js";
-import { ProductsMock } from "../../src/mocking.js";
+import chai from "chai";
+import mongoose from "mongoose";
+import config from "./../../src/config.js";
+import { Product } from "./../../src/dao/dbManagers/Product.js";
+import { ProductsMock } from "../mocks/products.mock.js";
+
 const expect = chai.expect;
 
+const { mongo: { dbTestUrl } } = config;
 
-const requester = supertest("http://localhost:8080")
-before(function () {
+describe("Set de pruebas del modulo de productos", () => {
+    before(function() {
+        mongoose.connect(dbTestUrl);
+        this.productDao = new Product();
+        this.productMock = new ProductsMock();
+    });
+    beforeEach(function() {
+        mongoose.connection.collections.products.drop();
+    });
 
-  this.productMock = new ProductsMock();
-});
-describe("Set de pruebas para los productos", function () {
-  const product = {
+    it("El dao debe retornar productos en un array", async function() {
+        const page = 1;
+        const filters = { category: "comestibles", status: 1 };
+        const options = { limit: 10 };
     
-title:"leche",
-description:"dolca",
-code:"694",
-status:false,
-price:"$1481.65",
-category:"limpieza",
-owner: "admin",
-stock: 34,
-image:"http://dummyimage.com/216x100.png/ff4444/ffffff",
-}
+        const result = await this.productDao.getAll(page, filters, options);
+        expect(result.docs).to.be.a("array");
+    });
 
-  it("GET /api/products/ GET debe retornar todos los productos", async function () {
-    const result = await requester.get("/api/products/")
-    expect(result.status).to.be.eql(200)
-  }).timeout(10000);
+    it("El dao debe crear un producto", async function() {
+        const productMock = this.productMock.product();
+        const result = await this.productDao.addProduct(productMock);
 
+        expect(result).to.be.a("object");
+        expect(result).to.be.ok;
+        expect(result).to.have.property("_id");
+    });
 
-  it("GET /api/products/:pid debe retornar un producto", async function () {
-    const result = await requester.get("/api/products/643c1d3d69ce9221316cc170")
-    //console.log(result)
+    it("El dao debe ver un producto", async function() {
+        const productMock = this.productMock.product();
 
-    expect(result._body.payload).to.have.property("_id");
-    expect(result._body.payload._id).to.be.eql("643c1d3d69ce9221316cc170")
-    expect(result.status).to.be.eql(200)
+        const product = await this.productDao.addProduct(productMock);
+        const result = await this.productDao.findOne(product._id);
 
-  }).timeout(10000)
+        expect(result).to.be.a("object");
+        expect(result).to.be.ok;
+        expect(result).to.have.property("_id");
+    });
 
+    it("El dao debe actualizar un producto", async function() {
+        const productMock = this.productMock.product();
 
+        const product = await this.productDao.addProduct(productMock);
+        
+        const productToUpdate = this.productMock.product();
 
-  it("POST /api/products Debe crear un producto correctamente", async function () {
+        const result = await this.productDao.updateProduct(product._id, productToUpdate);
 
-    const result = await requester.post("/api/products")
-    .field("title", product.title)
-    .field("description", product.description)
-    .field("price", product.price).field("status", product.status)
-    .field("code", product.code)
-    .field("stock", product.stock)
-    .field("category", product.category)
-    .field("owner", product.owner)
-    .attach("thumbnails", product.thumbnails)
-   // expect(response.headers["Content-Type"]).toMatch(/json/);
-   // expect(result.status).to.be.eql(200);
+        expect(result).to.be.ok;
+        expect(result.title).to.be.equal(productToUpdate.title);
+    });
 
-   // expect(response.body.email).toEqual('foo@bar.com');
-    // console.log(result)
-    // expect(result.status).to.be.eql(500);
-    // expect(result._body.payload).to.have.property("_id");
-  }).timeout(10000)
+    it("El dao debe retornar un producto por el codigo", async function() {
+        const productMock = this.productMock.product();
+        const product = await this.productDao.addProduct(productMock);
+        const result = await this.productDao.findByCode(product.code);
 
+        expect(result).to.be.ok;
+        expect(result).to.have.property("_id");
+    });
 
-}).timeout(10000)
+    it("El dao debe eliminar un producto", async function() {
+        const productMock = this.productMock.product();
+
+        const product = await this.productDao.addProduct(productMock);
+        const deleteProduct = await this.productDao.deleteProduct(product._id);
+
+        expect(deleteProduct).to.be.a("object");
+        const findProduct = await this.productDao.findOne(product._id);
+
+        expect(findProduct).to.be.null;
+    });
+});

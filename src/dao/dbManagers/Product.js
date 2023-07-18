@@ -59,7 +59,8 @@ export  class Product {
 
     updateProduct = async (id, product) => {
       try {
-        return await this.model.updateOne({_id: id}, product);
+        const updateProduct = await this.model.findByIdAndUpdate(id, product, { new: true });
+        return updateProduct;
       } catch (error) {
         throw new Error(error);
       }
@@ -76,7 +77,8 @@ export  class Product {
 
     deleteProduct = async (productId) => {
       try {
-        return await this.model.findByIdAndDelete(productId);
+        const deleteProduct = await this.model.findByIdAndDelete(productId, { new: true });
+        return deleteProduct;
       } catch (error) {
         throw new Error();
       }

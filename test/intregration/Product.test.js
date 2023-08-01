@@ -19,7 +19,7 @@ describe("Set de pruebas de integración para el módulo de productos", function
     before(async function() {
         await mongoose.connect(dbUrl);
         const credentials = {
-            email: "m.g4089188@gmail.com",
+            email: "ferweb.reyna@gmail.com",
             password: "123"
         };
         const result = await requester.post("/api/sessions/login").send(credentials);
@@ -75,7 +75,7 @@ describe("Set de pruebas de integración para el módulo de productos", function
         it("Debe retornar un error al no envíar el cuerpo del producto", async function(){
             const res = await requester.post("/api/products")
                 .set("Cookie", [`${this.cookie.name}=${this.cookie.value}`])
-                .attach("thumbnails", "./test/integration/assets/dog.jpg");
+                .attach("thumbnails", "./test/integration/assets/yerba-amanda-500.png");
     
             expect(res.status).be.equal(500);
             expect(res._body).to.have.property("error");
@@ -111,7 +111,7 @@ describe("Set de pruebas de integración para el módulo de productos", function
                 .field("code", productMock.code)
                 .field("stock", productMock.stock)
                 .field("category", productMock.category)
-                .attach("thumbnails", "./test/integration/assets/dog.jpg");
+                .attach("thumbnails", "./test/integration/assets/yerba-amanda-500.png");
 
             const productDataToUpdate = {
                 title: "update",
@@ -147,7 +147,7 @@ describe("Set de pruebas de integración para el módulo de productos", function
                 .field("code", productMock.code)
                 .field("stock", productMock.stock)
                 .field("category", productMock.category)
-                .attach("thumbnails", "./test/integration/assets/dog.jpg");
+                .attach("thumbnails", "./test/integration/assets/yerba-amanda-500.png");
             
             const res = await requester.put(`/api/products/${createProduct._body.payload._id}`)
                 .set("Cookie", [`${this.cookie.name}=${this.cookie.value}`]);
@@ -180,7 +180,7 @@ describe("Set de pruebas de integración para el módulo de productos", function
                 .field("code", productMock.code)
                 .field("stock", productMock.stock)
                 .field("category", productMock.category)
-                .attach("thumbnails", "./test/integration/assets/dog.jpg");
+                .attach("thumbnails", "./test/integration/assets/yerba-amanda-500.png");
 
             const deleteProduct = await requester.delete(`/api/products/${createProduct._body.payload._id}`)
                 .set("Cookie", [`${this.cookie.name}=${this.cookie.value}`]);

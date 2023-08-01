@@ -14,7 +14,7 @@ const options = {
             description: "Api para el proyecto final de Coderhouse",
         },
     },
-    apis: [`${__dirname}./../**/*.yaml`]
+    apis: [`${__dirname}docs/../**/*.yaml`]
 };
 
 const swaggerSpecs = swaggerJSDoc(options);

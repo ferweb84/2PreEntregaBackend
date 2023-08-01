@@ -2,7 +2,7 @@ import chai from "chai";
 import mongoose from "mongoose";
 import config from "./../../src/config.js";
 import { Product } from "./../../src/dao/dbManagers/Product.js";
-import { ProductsMock } from "../mocks/products.mock.js";
+import {ProductsMock} from "./../mocks/products.mock.js"
 
 const expect = chai.expect;
 
@@ -20,8 +20,9 @@ describe("Set de pruebas del modulo de productos", () => {
 
     it("El dao debe retornar productos en un array", async function() {
         const page = 1;
-        const filters = { category: "comestibles", status: 1 };
+        const filters = { category: "limpieza", status: false };
         const options = { limit: 10 };
+        
     
         const result = await this.productDao.getAll(page, filters, options);
         expect(result.docs).to.be.a("array");

@@ -1,19 +1,29 @@
-import { Router } from 'express';
-import { authentication } from '../../middlewares/authentication.js';
-import { getProducts, home, login, profile, purchase, register, viewCart, viewProduct, restorePassword } from '../controllers/views.controller.js';
-import { authorize } from '../../middlewares/authorization.js';
 import passport from 'passport';
+import { getViewProducts,getProductwithitsid , getCartwithitsId,loginView,registerView,productsInformation,chatView,ticket,mailtorecovery,recoverpassword,formproducts,getAdminview} from '../controllers/views.controller.js';
+import { Router } from "express";
+ import { roladm} from '../../middlewares/auth.js';
 
 const router = Router();
 
-router.get("/", passport.authenticate("current", {session: false, failureRedirect: '/login'}),home)
-router.get("/products", passport.authenticate("current", {session: false, failureRedirect: '/login'}), getProducts);
-router.get("/product/:productId",  passport.authenticate("current", {session: false, failureRedirect: '/login'}), viewProduct);
-router.get("/cart/:cartId", passport.authenticate("current", {session: false, failureRedirect: '/login'}), authentication(true), viewCart);
-router.get("/cart/:cartId/purchase",passport.authenticate("current", {session: false, failureRedirect: '/login'}), authentication(true), purchase);
-router.get("/register", register);
-router.get("/login", login);
-router.get("/profile", authentication(true), authorize(['user']), profile);
-router.get("/restore-password", restorePassword);
+router.get("/products",passport.authenticate("jwt", { session: false }), getViewProducts)
 
+router.get("/product/:pid",passport.authenticate("jwt",{session: false}),getProductwithitsid);
+
+router.get("/cart/:cid",passport.authenticate("jwt",{session:false}),getCartwithitsId);
+router.get("/cart/:cid/purchase",passport.authenticate("jwt",{session:false}),ticket)
+
+router.get("/",loginView);
+router.get("/admin",passport.authenticate("jwt",{session:false}),roladm,getAdminview)
+router.get("/register", registerView);
+
+router.get("/formemailrecovery", mailtorecovery)
+router.get("/recoverypassword/:token",recoverpassword)
+router.get("/products", productsInformation);
+router.get("/form-products",formproducts)
+router.get(
+    "/chat",
+    
+    chatView
+  );
 export default router;
+

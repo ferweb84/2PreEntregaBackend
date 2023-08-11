@@ -1,62 +1,38 @@
-{{!< main}}
+<div id="app" class="p-4 bg-slate-800/95 h-auto">
 
-<div class="container-fluid">
-    <div class="d-flex flex-column">
-        {{#if cart.products}}
-        <h3 class="text-center" id="title">
-            <i class="fa-solid fa-cart-shopping text-primary"></i>
-            Mi carrito de compras 
-        </h3>
-        {{#each cart.products}}
-        <div class="col m-1" data-element-id="{{product._id}}">
-            <div class="d-flex flex-row align-items-center shadow border rounded-3 p-3">
-                <div class="col-2">
-                    {{#each product.thumbnails}}
-                    <img src="{{this}}" alt="product-img" style="width: 5rem;">
-                    {{/each}}
-                </div>
-                <div class="col-9">
-                    <h3>{{product.title}}</h3>
-                    <p>{{product.description}}</p>
-                    <div class="d-flex flex-column">
-                        <p>Cantidad</p>
-                        <div class="d-flex align-items-center">
-                            <div class="col-3 d-flex flex-row gap-3 text-center py-1 rounded">
-                                <button class="btn btn-primary btn-sm" onclick="agregaUno(1, '{{@root.cart._id}}', '{{product._id}}')">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                <span class="text-muted" id="cantidad-{{product._id}}">{{ quantity }}</span>
-                                <button class="btn btn-primary btn-sm" onclick="borraUno(-1, '{{@root.cart._id}}', '{{product._id}}')">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-1 d-flex justify-content-center align-items-center">
-                    <button class="btn btn-sm btn-danger" id="borrar" onclick="borrar('{{@root.cart._id}}', '{{product._id}}')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+  <h1 class="flex p-2 justify-center font-mono text-2xl text-slate-200">Details
+    for Cart ID
+    <span id="cartId">{{cart._id}}</span>
+  </h1>
+  <div id="cartDetail" class="flex flex-col justify-center m-6 items-center">
+    {{#each cart.products}}
+    <div class="max-w-4xl border rounded-lg shadow bg-gray-700/50 border-gray-600 my-2" id="{{this.productId._id}}">
+      <div>
+        {{#each this.productId.thumbnails}}
+        <img src="{{this}}" alt="product image" />
         {{/each}}
-        <div class="d-flex justify-content-end align-items-center mt-5 gap-2">
-            <button class="btn btn-sm btn-secondary" onclick="vaciarCarrito('{{@root.cart._id}}')">
-                Vaciar el carrito
-            </button>
-            <a href="/cart/{{@root.cart._id}}/purchase" class="btn btn-sm btn-primary">
-                Finalizar la compra
-            </a>
+      </div>
+      <div class="flex flex-wrap w-full p-2 justify-evenly">
+        <div class="px-5 mt-2">
+          <h5 class="text-2xl font-semibold tracking-tight text-black text-center">{{this.productId.title}}</h5>
+          <p class="font-light tracking-tight text-black my-1">Selected quantity: {{this.quantity}}</p>
+          <p class="font-light tracking-tight text-black my-1">Unit price: ${{this.productId.price}}</p>
+          <div class="flex justify-between">
+          </div>
         </div>
-        {{else}}
-        <div class="col d-flex flex-column p-3 justify-content-center align-items-center">
-            <h3 id="titleEmptyCart">
-                <i class="fa-solid fa-triangle-exclamation text-warning"></i>
-                El carrito está vacío
-            </h3>
-        </div>
-        {{/if}}
+      </div>
+
     </div>
+    <form class="flex justify-end" id="removeFromCartForm-{{this.productId._id}}">
+      <button type="submit"
+        class="text-slate-100 bg-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-500 font-medium rounded-lg text-xs w-full sm:w-auto px-3 py-1.5 text-center"><span>Remove</span></button>
+    </form>
+    {{/each}}
+  </div>
+  <a href="/cart/{{@root.cart._id}}/purchase"><button>Finalizar compra</button></a>
+  <a href="/products"><button>Volver</button></a>
 </div>
-<script src="../js/index.js"></script>
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
+"></script>
+<script src="/js/cart.js"></script>

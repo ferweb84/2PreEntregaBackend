@@ -14,14 +14,14 @@ form.addEventListener("submit", async (e) => {
     headers: {
       "Content-Type": "application/json",
     },
-  });
-
-  let result = await response.json();
-  console.log(result);
-
-  if(result.error) {
-    alert(result.error)
-  } else {
-    window.location.href = '/login';
-  }
+  }).then(() => {
+    Swal.fire({
+      title: "User registered",
+      toast: true,
+      position: "top-right",
+      icon: "success",
+      
+    });
+  })
+  .catch((error) => console.log(error));
 });

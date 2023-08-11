@@ -1,17 +1,50 @@
-<div class="fluid d-flex flex-column justify-content-center align-items-center vh-100 vw-auto">
-  <form class="d-flex flex-column w-25 border border-2 border-primary rounded-3 p-4" id="loginForm">
-    <h1 class="m-2 text-center">Iniciar sesión</h1>
-    <div class="col form-group m-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" name="email" id="email" placeholder="Email">
-    </div>
-    <div class="col form-group m-3">
-      <label for="password" class="form-label">Contraseña</label>
-      <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
-    </div>
-    <div class="d-grid m-3">
-      <input class="btn btn-primary" type="submit" value="Iniciar sesión" />
-    </div>
+{{!-- <div id="login">
+  <h1>Login</h1>
+  <form id="loginForm">
+    <label>Email</label>
+    <input name="email" id="email"/>
+    <br />
+    <label>Contraseña</label>
+    <input type="password" name="password" id="password" />
+    <input type="submit" />
   </form>
+  <p>¿No estás registrado? <a href="/register">Regístrate aquí</a></p>
+</div> --}}
+<div>
+  <form id="login">
+
+  <h2 class="titleLogin">Login</h2>
+  <div class="form-outline mb-4">
+    <input type="email" name="email" id="email" class="form-control" />
+    <label class="form-label" for="form2Example1">Email address</label>
+  </div>
+
+
+  <div class="form-outline mb-4">
+    <input type="password" name="password" id="password" class="form-control" />
+    <label class="form-label" for="form2Example2">Password</label>
+  </div>
+
+
+
+  <!-- Submit button -->
+  <button type="submit" class="btn btn-primary btn-block mb-4" style="position: relative; left: 2%;">Sign in</button>
+ 
+  <!-- Register buttons -->
+  <div class="text-center" style="position: relative; left: 2%">
+    <p>Not a member? <a href="/register">Register</a></p>
+  </div>
+
+  <div class="text-center" style="position: relative; left: 2%">   
+    <a href="/formemailrecovery">Recovery password</a>
+    
+  </div>
+</form>
+<div class=" githubButton"> <a href="/api/sessions/github"><button class="btn btn-warning">Enter with Github</button></a></div>
 </div>
+
+
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
+"></script>
 <script src="/js/login.js"></script>

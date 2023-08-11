@@ -1,172 +1,118 @@
-import { apiResponser } from "../traits/ApiResponser.js";
-import { GetProfile } from "../dao/dtos/getProfile.js";
-import { productService, cartService, ticketService } from "../services/index.js";
+import { productService } from '../dao/services/product.service.js';
+import { cartService } from '../dao/services/cart.service.js';
+import { messagesService } from '../dao/services/messages.service.js';
+import { ticketService } from '../dao/services/ticket.service.js';
+import { userService } from '../dao/services/user.service.js';
+import __dirname from '../dirname.js';
+import config from "../config.js";
+import jwt from "jsonwebtoken"
+export async function getViewProducts(req,res){
 
-export async function home(req, res) {
-    try {
-        const { limit = 10, page = 1, query = "{}", sort = null } = req.query;
-        const { category, status } = JSON.parse(query);
+    
 
-        const filters = {};
-        if (category) filters.category = category;
-        if (status) filters.status = status;
-        
-        const options = { limit, page };
-        if (sort) options.sort = sort;
+    const { limit = 2, page = 1, category, usable, sort } = req.query;
+    const {
+        docs: products,
+        hasPrevPage,
+        hasNextPage,
+        nextPage,
+        prevPage,
+      } = await productService.getProductsfilterPage(page, limit, category, usable, sort);
 
-        const result = await productService.findAll(page, filters, options);
-        const totalPages = result.totalPages;
-        const prevPage = result.hasPrevPage ? result.prevPage : null;
-        const nextPage = result.hasNextPage ? result.nextPage : null;
-        const hasPrevPage = result.hasPrevPage;
-        const hasNextPage = result.hasNextPage;
-        const prevLink = prevPage ? `/products?limit=${limit}&page=${prevPage}&query=${query}&sort=${sort}` : null;
-        const nextLink = nextPage ? `/products?limit=${limit}&page=${nextPage}&query=${query}&sort=${sort}` : null;
-        const payload = JSON.parse(JSON.stringify(result.docs));
-        if (result && result.error) {
-            return apiResponser.errorResponse(res, result.error, 400); 
-        }
 
-        res.render('home', {
-            payload,
-            totalPages,
-            prevPage,
-            nextPage,
-            hasPrevPage,
-            hasNextPage,
-            prevLink,
-            nextLink,
-            user: req.session.user
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
+      res.render("products", {
+      
+        user:req.user,
+        products,
+        page,
+        hasPrevPage,
+        hasNextPage,
+        prevPage,
+        nextPage,
+   
+      });
 }
 
-export async function getProducts(req, res) {
-    try {
-        const { limit = 10, page = 1, query = "{}", sort = null } = req.query;
-        const { category, status } = JSON.parse(query);
 
-        const filters = {};
-        if (category) filters.category = category;
-        if (status) filters.status = status;
-        
-        const options = { limit, page };
-        if (sort) options.sort = sort;
+export async function getProductwithitsid(req,res){
+    const { pid } = req.params;
+    console.log(req.user)
+    const product = await productService.getProductsbyitsId(pid);
+    res.render("product", {
+      user:req.user,
 
-        const result = await productService.findAll(page, filters, options);
-        const totalPages = result.totalPages;
-        const prevPage = result.hasPrevPage ? result.prevPage : null;
-        const nextPage = result.hasNextPage ? result.nextPage : null;
-        const hasPrevPage = result.hasPrevPage;
-        const hasNextPage = result.hasNextPage;
-        const prevLink = prevPage ? `/products?limit=${limit}&page=${prevPage}&query=${query}&sort=${sort}` : null;
-        const nextLink = nextPage ? `/products?limit=${limit}&page=${nextPage}&query=${query}&sort=${sort}` : null;
-        const payload = JSON.parse(JSON.stringify(result.docs));
-        if (result && result.error) {
-            return apiResponser.errorResponse(res, result.error, 400); 
-        }
+      product,
+      
+  
+    });
+}
+export async function getCartwithitsId(req,res){
+    const { cid } = req.params;
+    const cart = await cartService.getCartsbyId(cid);
+    res.render("cart", {
+      cart,
+    });
+}
+export async function ticket(req,res){
+  const { cid }=req.params
 
-        res.render("products", {
-            payload,
-            totalPages,
-            prevPage,
-            nextPage,
-            hasPrevPage,
-            hasNextPage,
-            prevLink,
-            nextLink,
-            user: req.session.user
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  const ticketFinal= await ticketService.createTickettoCart(cid)
+  
+  res.render("ticket",{
+    ticketFinal: JSON.parse(JSON.stringify(ticketFinal)),
+    user: req.user
+  })
 
-export async function viewProduct(req, res) {
-    try {
-        const { productId } = req.params;
-        const result = await productService.findOne(productId);
-        res.render('product', {
-            product: JSON.parse(JSON.stringify(result)),
-            user: req.session.user
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
-
-export async function viewCart(req, res) {
-    try {
-        const { cartId } = req.params;
-        const result = await cartService.findOne(cartId);
-        if(result && result.error) {
-            return apiResponser.errorResponse(res, result.error);
-        }
-        res.render('cart', {
-            cart: JSON.parse(JSON.stringify(result)),
-            user: req.session.user
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
-
-export async function purchase(req, res) {
-    try {
-        const { cartId } = req.params;
-        const result = await ticketService.createTicket(cartId);
-        
-        res.render('purchase', {
-            ticket: JSON.parse(JSON.stringify(result)),
-            user: req.session.user
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
 }
 
-export async function register(req, res) {
-    try {
-        res.render('register');      
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+export function mailtorecovery(req,res){
+  return res.render("formemailrecovery")
+}
+export async function recoverpassword(req,res){
 
-export async function login(req, res) {
-    try {
-        res.render('login');      
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  const { token} = req.params;
 
-export async function profile(req, res) {
-    try {
-        const getProfile = new GetProfile(req.session.user);
-        res.render('profile', { user: getProfile });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  const decodedToken = jwt.verify(token,config.sessionSecret);
 
-export async function restorePassword(req, res) {
-    try {
-        const { token } = req.query;
-        
-        const restore = await restoreService.restorePassword(token);
-        if (!restore) {
-            return res.render('generateRestorePassword');
-        } else {
-            if(!token) {
-                return res.render('generateRestorePassword');
-            } else {
-                return res.render('restorePassword');
-            }
-        }
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
+  const recUser = await userService.findbyuserid({email:decodedToken.email})
+  console.log(recUser.tokenExpiration);
+  return res.render("recoverypassword")
+}
+export function loginView(req,res){
+
+   return res.render("login");
+}
+export function registerView(req,res){
+    return res.render("register");
+}
+export function getAdminview(req,res){
+  return res.render("admin")
+}
+export function formproducts(req,res){
+  return res.render("form-products")
+}
+export function productsInformation(req,res){
+  return res.render("products", { user: req.user });
+}
+export const chatView = async (req, res) => {
+  try {
+    const messages = await messagesService.getMessages();
+    res.render("chat", {
+      messages,
+      style: "styles.css",
+      title: "Chat",
+    });
+
+    if (!messages) {
+      return res.status(404).render("error", {
+        message: "Error 404: Messages not found",
+      
+   
+      });
     }
+  } catch (error) {
+    res
+      .status(500)
+      .send({ status: "error", error: "Failed to render chat view" });
+  }
 };

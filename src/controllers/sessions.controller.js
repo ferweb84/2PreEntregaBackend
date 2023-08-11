@@ -1,103 +1,84 @@
-import { GetProfile } from "../dao/dtos/getProfile.js";
-import { userService } from "../services/index.js";
-import { apiResponser } from "../traits/ApiResponser.js";
-import { generateToken } from "../utils.js"
-import config from "../config.js"
+import CurrentUserDto from "../dao/dtos/current-user-dto.js";
+import { generateToken } from "../utilsjwt.js";
+import { userService } from "../dao/services/user.service.js";
+import { isValidPassword } from "../utils.js";
+import config from "../config.js";
+import jwt from "jsonwebtoken";
 
-const {jwt: { cookie } } = config;
-
-export async function login(req, res) {
-    try {
-        const { email, password } = req.body;
-        const result = await userService.login(email, password);
-        
-        req.session.user = {
-            id: result._id,
-            name: `${result.first_name} ${result.last_name}`,
-            email: result.email,
-            age: result.age,
-            rol: result.role,
-            cart: result.cart
-        };
-
-        return apiResponser.successResponse(res, req.session.user);
-
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
-
-export async function failLogin(req, res) {
-    try {
-        return apiResponser.errorResponse(res, `Credenciales inválidas`, 400);
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
-
-export async function register(req, res) {
-    
-    // const {first_name, last_name, email,password} =req.body;
-    // console.log(`Registering ${first_name} ${last_name}email:${email}and pwd:${password}`)
-    
-    try {
-        return apiResponser.successResponse(res, `Usuario registrado con éxito.`);
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
-
+const { jwtSecret } = config
+export async function registerUser(req, res) {
+  return res.send({ status: "Success", message: "User registered" })
+}
 export async function failRegister(req, res) {
-    try {
-        return apiResponser.errorResponse(res, `El usuario ya se encuentra registrado.`);
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  return res.send({ status: "status", error: "User already exists" })
+}
+export async function loginUser(req, res) {
+  const { email, password } = req.body
+  const user = await userService.findWiththemail({ email: email })
+  if (!user) return res.status(401).send({ status: "error", error: "User does not exist" })
+  if (!isValidPassword(user, password)) return res.status(401).send({ status: "error", error: "Invalid credentials" })
+  if (user.email === "adminCoder@coder.com") {
+    user.role = "admin"
+  } else {
+    user.role = "user"
+  }
+  const jwtUser = {
+    id: user._id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    age: user.age,
+    email: user.email,
+    role: user.role,
+    password: "",
+    cart: user.cart,
+  }
 
-export async function logout(req, res) {
-    try {
-        res.clearCookie(cookie);
-        req.session.destroy((error) => {
-            if(error) {
-                apiResponser.errorResponse(res, error);
-            } else {
-                res.redirect('/login');
-            }
-        });
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  const accesstoken = jwt.sign(jwtUser, config.jwtSecret, { expiresIn: "24h" })
+  const last_connection = await userService.updateConnection(jwtUser.email)
 
-export async function current(req, res) {
-    try {
-        const getProfile = new GetProfile(req.session.user);
-        return apiResponser.successResponse(res, getProfile);
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  if (!last_connection) {
+    return res
+      .status(500)
+      .send({ status: 'error', error: 'Failed to update last connection' })
+  }
 
-export async function github(req, res) {
-    try {
-        
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
 
-export async function githubCallback(req, res) {
-    try {
-        req.session.user = {
-            name: `${req.user.first_name} ${req.user.last_name}`,
-            email: req.user.email,
-            age: req.user.age,
-            rol: req.user.role,
-            cart: req.user.cart
-        }
-        res.redirect("/products");
-    } catch (error) {
-        return apiResponser.errorResponse(res, error.message);
-    }
-};
+  return res.cookie("jwtCookie", accesstoken, { maxAge: 60 * 60 * 1000, httpOnly: true }).send({ status: jwtUser })
+}
+export function githubCallback(req, res) {
+
+  const jwtUser = {
+    name: req.user.first_name,
+    email: req.user.email,
+    cart: req.user.cart,
+  };
+
+  const token = jwt.sign(jwtUser, jwtSecret, { expiresIn: "24h" })
+
+  res.cookie("jwtCookie", token, { httpOnly: true }).redirect("/products");
+
+}
+export async function Logout(req, res) {
+  const { jwtCookie: token } = req.cookies
+  const { email } = await userService.decodeUser(token)
+  const last_connection = await userService.updateConnection(email)
+  
+  if (!last_connection) {
+    req.logger.error('Failed to update last connection')
+    return res
+      .status(500)
+      .send({ status: 'error', error: 'Failed to update last connection' })
+  }
+  console.log(last_connection)
+  return res.clearCookie("jwtCookie").send({ status: "sucess", message: "Log out sucessfull" })
+}
+export function failLogin(req, res) {
+  res.send({ status: "error", error: "Authentication error" })
+}
+export function getcurrentUser(req, res) {
+
+  console.log(req.user)
+  const userDto = new CurrentUserDto(req.user);
+  console.log(userDto)
+  return res.send({ status: "success", payload: userDto })
+}

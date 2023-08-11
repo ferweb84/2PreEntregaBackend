@@ -112,7 +112,7 @@ export default class CartManager {
                 return `The cart with this ID does not exist`;
             }
         } catch (error) {
-            console.log(error)
+            req.logger.error(`Error to add products to the cart ${error}`)
         }
 
     }
@@ -139,7 +139,7 @@ export default class CartManager {
 
             }
         } catch (error) {
-            console.log(error);
+            req.logger.error(`Failed to find the cart ${error}`)
         }
 
 

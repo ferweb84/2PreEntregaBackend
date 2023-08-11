@@ -1,9 +1,0 @@
-components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        status:
-          type: string
-        error:
-          type: string

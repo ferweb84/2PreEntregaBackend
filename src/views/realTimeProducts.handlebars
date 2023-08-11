@@ -1,65 +1,9 @@
-<div class="container">
-    <h1>Lista de productos</h1>
-    <div class="row" id="products-container"></div>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center" id="pagination"></ul>
-    </nav>
+<div id="productsList">
+    <p id="log"></p>
+    <h1>Products list to modified</h1>
+    <div id="listproducts">
+    </div>
+    <div id="imageproducts"></div>
 </div>
-
-<div class="container m-5">
-    <h2>Crear nuevo producto</h2>
-    <form id="productForm" enctype="multipart/form-data" method="post">
-        <div class="form-group row mt-2">
-            <div class="col">
-                <label class="form-label" for="title">Titulo</label>
-                <input class="form-control" type="text" name="title" id="title">
-            </div>
-            <div class="col">
-                <label class="form-label" for="description">Descipción</label>
-                <input class="form-control" type="text" name="description" id="description">
-            </div>
-        </div>
-        <div class="form-group row mt-2">
-            <div class="col">
-                <label class="form-label" for="price">Precio</label>
-                <input class="form-control" type="text" name="price" id="price">
-            </div>
-            <div class="col">
-                <label class="form-label" for="code">Código</label>
-                <input class="form-control" type="text" name="code" id="code">
-            </div>
-        </div>
-        <div class="form-group row mt-2">
-            <div class="col">
-                <label class="form-label" for="stock">Stock</label>
-                <input class="form-control" type="text" name="stock" id="stock">
-            </div>
-            <div class="col">
-                <label class="form-label" for="category">Categoría</label>
-                <input class="form-control" type="text" name="category" id="category">
-            </div>
-        </div>
-        <div class="form-group row mt-2">
-            <div class="col">
-                <label for="state">Estado</label>
-                <select name="status" id="status" class="form-control">
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
-                </select>
-            </div>
-            <div class="col">
-                <label for="thumbnails">Imágenes</label>
-                <input type="file" multiple="true" class="form-control-file" id="thumbnails" name="thumbnails">
-            </div>
-        </div>
-        <div class="form-group row mt-3">
-            <div class="col">
-                <input type="submit" value="Crear producto" class="btn btn-primary" id="submitForm">
-            </div>
-        </div>
-        <div class="m-3" id="result"></div>
-    </form>
-</div>
-
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>

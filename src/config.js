@@ -1,30 +1,25 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv"
 dotenv.config();
 
-const config = {
-    mongo: {
-        dbUrl: process.env.DB_URL,
-        dbTestUrl: process.env.DB_TEST_URL
-    },
-    session: {
-        sessionSecret: process.env.SESSION_SECRET,
-    },
-    jwt: {
-        cookie: process.env.JWT_COOKIE
-    },
-    github: {
-        clientID: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        callbackUrl: process.env.CALLBACK_URL,
-    },
-    server: {
-        port: process.env.PORT,
-        developmentMode: process.env.DEV_MODE
-    },
-    email: {
-        user: process.env.EMAIL,
-        password: process.env.EMAIL_PASSWORD
-    }
-};
+import { environment } from "./config/commander.js";
 
-export default config;
+
+dotenv.config({
+    path: environment === "DEVELOPMENT" ? "./.env.dev" : "./.env.prod",
+  }); 
+  
+const secret=process.env.SESSION_SECRET
+const connectiondatabase=process.env.DB_URL
+const config ={
+    dbUrl: connectiondatabase,
+    sessionSecret: secret,
+    clientID:process.env.CLIENT_ID,
+    clientSecret:process.env.CLIENT_SECRET,
+    callbackUrl:process.env.CALLBACK_URL,
+    mode:process.env.DEVELOPMENT_MODE,
+    jwtSecret: process.env.JWT_SECRET,
+    loggermode:process.env.LOGGER,
+    adminEmail:process.env.ADMIN_EMAIL,
+    adminPass:process.env.ADMIN_PASSWORD
+}
+export default config

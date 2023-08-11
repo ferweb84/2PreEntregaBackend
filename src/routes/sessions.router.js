@@ -1,42 +1,28 @@
 import { Router } from "express";
+import { registerUser ,loginUser,failRegister,githubCallback,Logout,failLogin,getcurrentUser} from "../controllers/sessions.controller.js";
 import passport from "passport";
-import { authentication } from "../../middlewares/authentication.js";
-import { current, failLogin, failRegister, github, githubCallback, login, logout, register } from "../controllers/sessions.controller.js";
-import { authorize } from "../../middlewares/authorization.js";
+
+const router = Router()
+router.post("/register", passport.authenticate("register", { failureRedirect: "/api/sessions/failRegister" }), registerUser)
 
 
-const router = Router();
+router.get("/failRegister",failRegister)
 
-router.post(
-    '/login',
-    passport.authenticate('login', { failureRedirect: '/api/sessions/failLogin' }),
-    login
-);
+// router.post("/login",passport.authenticate("login",{failureRedirect:"/api/sessions/failLogin"}),loginUser);
 
-router.get("/failLogin", failLogin);
+router.post("/login",loginUser);
 
-router.post(
-    "/register", 
-    passport.authenticate("register", 
-    { failureRedirect: "/api/sessions/failRegister" }
-    ), register);
 
-router.get("/failRegister", failRegister);
+router.get("/failLogin",failLogin)
 
-router.post("/logout", logout);
 
-router.get("/current", authentication(), authorize(['user']), current);
+router.get("/current",passport.authenticate("jwt",{session:false}),getcurrentUser)
 
-router.get(
-    "/github", 
-    passport.authenticate("github", {scope: ["user:email"]}),
-    github
-);
+router.get("/github",passport.authenticate("githublogin",{scope:["user:email"] }),(req,res)=>{
 
-router.get(
-    "/githubcallback",
-    passport.authenticate("github", {failureRedirect: "/login"}),
-    githubCallback
-);
+})
 
+router.get("/githubcallback",passport.authenticate("githublogin",{failureRedirect:"/"}),githubCallback)
+
+router.get("/logout",Logout);
 export default router;

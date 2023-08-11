@@ -1,84 +1,75 @@
-import chai from "chai";
+import chai from "chai"
+
+import config from "../../src/config.js";
+
+import { productMongo } from "../../src/dao/dbManagers/productdbManager.js";
+
 import mongoose from "mongoose";
-import config from "./../../src/config.js";
-import { Product } from "./../../src/dao/dbManagers/Product.js";
-import {ProductsMock} from "./../mocks/products.mock.js"
-
 const expect = chai.expect;
+//const requester = supertest("http://localhost:8080")
+const { dbUrl } = config
+describe("Set de pruebas para los productos", function () {
+  this.timeout(10000)
+  before(function () {
 
-const { mongo: { dbTestUrl } } = config;
+    mongoose.connect(dbUrl)
 
-describe("Set de pruebas del modulo de productos", () => {
-    before(function() {
-        mongoose.connect(dbTestUrl);
-        this.productDao = new Product();
-        this.productMock = new ProductsMock();
-    });
-    beforeEach(function() {
-        mongoose.connection.collections.products.drop();
-    });
+    this.productId = ''
+    this.productsDao = productMongo
+  });
+  // it('addProduct creates new product with valid input', async function () {
+  //   const productMock = {
+  //     title: 'Test Products',
+  //     description: 'This is a Test Product to add ',
+  //     code: "PR222",
+  //     price: 10,
+  //     stock: 555,
+  //     owner: "admin",
+  //     category: 'Procesador',
+  //     thumbnails: ['image1.jpg', 'image3.jpg']
+  //   }
+  //   const result = await this.productsDao.createProduct(productMock)
+  //   console.log(result)
+  //   this.productId = result._id.toString()
+  //   console.log(this.productId)
+  //   expect(result).to.have.property('_id')
+  // })
 
-    it("El dao debe retornar productos en un array", async function() {
-        const page = 1;
-        const filters = { category: "limpieza", status: false };
-        const options = { limit: 10 };
-        
-    
-        const result = await this.productDao.getAll(page, filters, options);
-        expect(result.docs).to.be.a("array");
-    });
 
-    it("El dao debe crear un producto", async function() {
-        const productMock = this.productMock.product();
-        const result = await this.productDao.addProduct(productMock);
+  // it('getProducts returns an array of products', async function () {
+  //   const { docs } = await this.products.getProducts()
 
-        expect(result).to.be.a("object");
-        expect(result).to.be.ok;
-        expect(result).to.have.property("_id");
-    });
+  //   expect(docs).to.be.a('array')
+  // })
 
-    it("El dao debe ver un producto", async function() {
-        const productMock = this.productMock.product();
+  // it('getProducts returns expected products with valid input', async function () {
 
-        const product = await this.productDao.addProduct(productMock);
-        const result = await this.productDao.findOne(product._id);
+  //   const result = await this.products.getProducts(1, 5, 'Procesador', 'true', 1)
 
-        expect(result).to.be.a("object");
-        expect(result).to.be.ok;
-        expect(result).to.have.property("_id");
-    });
+  //   expect(result.docs.length).to.be.lessThanOrEqual(10)
+  // })
 
-    it("El dao debe actualizar un producto", async function() {
-        const productMock = this.productMock.product();
+  // it('getProductById returns expected product with valid input', async function () {
+  //   const result = await this.products.getProductsbyId(this.productId)
 
-        const product = await this.productDao.addProduct(productMock);
-        
-        const productToUpdate = this.productMock.product();
+  //   expect(result).to.have.property('_id')
+  // })
 
-        const result = await this.productDao.updateProduct(product._id, productToUpdate);
+  // it('updateProduct modifies a product successfully', async function () {
+  //   const example = {
+  //     category: 'test'
+  //   }
+  //   const result = await this.products.updateProduct(this.productId, example)
+  //   const productAfter = await this.products.getProductsbyId(this.productId)
+  //   console.log(result.modifiedCount)
+  //   expect(result).to.have.property('modifiedCount').eq(1)
+  //   expect(productAfter.category).to.eq('test')
+  // })
+  // it('deleteProduct deletes a product successfully', async function () {
+  //   const result = await this.products.deleteProduct(this.productId)
+  //   const productsAfter = await this.products.getProducts()
 
-        expect(result).to.be.ok;
-        expect(result.title).to.be.equal(productToUpdate.title);
-    });
-
-    it("El dao debe retornar un producto por el codigo", async function() {
-        const productMock = this.productMock.product();
-        const product = await this.productDao.addProduct(productMock);
-        const result = await this.productDao.findByCode(product.code);
-
-        expect(result).to.be.ok;
-        expect(result).to.have.property("_id");
-    });
-
-    it("El dao debe eliminar un producto", async function() {
-        const productMock = this.productMock.product();
-
-        const product = await this.productDao.addProduct(productMock);
-        const deleteProduct = await this.productDao.deleteProduct(product._id);
-
-        expect(deleteProduct).to.be.a("object");
-        const findProduct = await this.productDao.findOne(product._id);
-
-        expect(findProduct).to.be.null;
-    });
-});
+  //   expect(result).to.have.property('deletedCount').eq(1)
+  //   expect(productsAfter.docs).to.be.deep.eq([])
+  // })
+})

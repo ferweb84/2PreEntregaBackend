@@ -1,34 +1,54 @@
-{{!< main}}
-
-<div class="container-fluid">
-    <div class="d-flex flex-wrap flex-row justify-content-evenly align-items-center vh-100 m-5">
-        <div class="col text-center">
-            {{#each product.thumbnails}}
-                <img src="{{this}}" alt="product-image" class="img-fluid">
-            {{/each}}
-        </div>
-        <div class="col d-flex flex-column">
-            <h2>{{product.title}}</h2>
-            <p>{{product.description}}</p>
-            <hr />
-            <div class="d-flex flex-column gap-4">
-                <small class="text-muted">Stock: {{product.stock}}</small>
-                <h3>${{product.price}}</h3>
-            </div>
-            {{#if user}}
-            <div class="d-grid mt-3">
-                <button class="btn btn-primary" onclick="addToCart('{{#if @root.user}}{{@root.user.cart}}{{/if}}', '{{product._id}}')">
-                    <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
-                </button>
-            </div>
-            {{else}}
-            <div class="d-grid mt-3">
-                <a class="btn btn-primary" href="/login">
-                    Iniciar sesión para comprar
-                </a>
-            </div>
-            {{/if}}
-        </div>
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">SuperHiperMegaMercado</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" id="home">Home</a>
+        </li>
+      </ul>
+      <div><button id="logout">Log out</button></div>
     </div>
+  </div>
+</nav>
+<div id="app">
+  <h1 id="productId">Details of the product with the ID
+    {{product._id}}</h1>
+  <input type="text" name="cid" id="cid" value={{user.cart}} />
+  <h2>{{user.cart}}</h2>
+  <input type="text" name="pid" id="pid" value={{product._id}} style="display:none" />
+  <div id="productDetail" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div id="product-{{product._id}}" class="max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 m-1">
+      <div>
+        {{#each product.thumbnails}}
+        <img src="{{this}}" alt="product image" />
+        {{/each}}
+      </div>
+      <div>
+        <h5 id="title">{{product.title}}</h5>
+        <p>Description:
+          {{product.description}}</p>
+        <p>Category:
+          {{product.category}}</p>
+        <p>Available stock:
+          {{product.stock}}</p>
+        <p>Product code:
+          {{product.code}}</p>
+
+        <div>
+          <p>${{product.price}}</p>
+          <button id="botonForm">Add to Cart 🛒</button>
+        </div>
+      </div>
+    </div>
+    <a href="/products"><button>Volver</button></a>
+  </div>
 </div>
-<script src="../js/index.js"></script>
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
+"></script>
+<script src="/js/product.js"></script>

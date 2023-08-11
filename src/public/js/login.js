@@ -1,5 +1,6 @@
-const form = document.getElementById("loginForm");
-
+const form = document.getElementById("login");
+const inputEmail=document.getElementById("email");
+const inputPass=document.getElementById("password");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -14,13 +15,18 @@ form.addEventListener("submit", async (e) => {
     headers: {
       "Content-Type": "application/json",
     },
-  });
+  }) 
 
-  let result = await response.json();
-  
-  if(result.error) {
-    alert(result.error);
-  } else {
-    window.location.href = '/products';
+
+  if(response.ok){
+   
+    window.location.href = "/products";
+  }else{
+    Swal.fire({
+      title: "Password incorrect",
+      toast: true,
+      position: "top-right",
+      icon: "error",
+    });
   }
 });

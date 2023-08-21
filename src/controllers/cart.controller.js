@@ -1,8 +1,4 @@
-import { ticketService } from "../dao/services/ticket.service.js";
-import { cartService } from "../dao/services/cart.service.js";
-import { userService } from "../dao/services/user.service.js";
-import { productService } from "../dao/services/product.service.js"
-
+import { cartService,ticketService,userService,productService } from "../dao/services/index.js";
 export async function createCart(req, res) {
     try {
         const cart = req.body;
@@ -59,32 +55,30 @@ export async function addProductcart(req, res) {
         const pId = req.params.pid
         const { quantity } = req.body
         let resul = {}
-        console.log(req.user)
-        let prod = await productService.getProductsbyitsId(pId);
-        let user=await userService.findbyuserid({_id:req.user.id})
-        console.log(user)
-        if (user.role === "premium" || user.role === "admin") {
-            if (user.email !== prod.owner) {
-                resul = await cartService.addProductCart(cId, pId, quantity);
 
-            } else {
-                return res
-                    .status(500)
-                    .send({ status: "error", error: "You cannot add the product because you are the owner" });
-            }
-        } else {
-            
+        let prod = await productService.getProductsbyitsId({_id:pId});
+       // let user=await userService.findbyuserid({_id:req.user.id})
+        console.log(prod.stock)
+        if(prod.stock === 0){
+            return res
+                     .status(400)
+                     .send({ status: "error", error: resul });
+        }else{
             resul = await cartService.addProductCart(cId, pId, quantity);
         }
+      
+    
 
-        if (!resul || typeof resul === "string") {
-            return res
-                .status(400)
-                .send({ status: "error", error: resul });
-        }
-        return res.send({ status: "success", payload: resul });
+        // if (!resul || typeof resul === "string") {
+        //     return res
+        //         .status(400)
+        //         .send({ status: "error", error: resul });
+        // }
+        // return res.send({ status: "success", payload: resul });
+           return res.send({ status: "success", payload: "paso" });
 
     } catch (error) {
+        
         req.logger.error(`Cannot add products to the cart with mongoose ${error}`);
         return res.status(500).send({
             status: "error",
@@ -169,11 +163,12 @@ export async function deleteproductFromthecart(req, res) {
         return res.send({ status: "success", payload: resul });
 
     } catch (error) {
-        req.logger.error(`Cannot update the quantity of products of the cart with mongoose ${error}`);
-        return res.status(500).send({
-            status: "error",
-            error: "Failed to delete products from the cart",
-        });
+        console.log(error)
+        // req.logger.error(`Cannot update the quantity of products of the cart with mongoose ${error}`);
+        // return res.status(500).send({
+        //     status: "error",
+        //     error: "Failed to delete products from the cart",
+        // });
     }
 }
 export async function purchase(req, res) {

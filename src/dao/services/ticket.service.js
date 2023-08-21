@@ -1,12 +1,11 @@
-import { productsRepository } from "../repositories/product.repository.js";
-import { cartRepository } from "../repositories/cart.repository.js";
-import { userRepository } from "../repositories/user.repository.js";
-import { ticketRepository } from "../repositories/ticket.repository.js";
-import { faker } from "@faker-js/faker"
 
+import { productsRepository,cartRepository,userRepository,ticketRepository } from "../repositories/index.js";
+
+import { faker } from "@faker-js/faker"
+import moment from "moment"
 const today = new Date()
 const date_time = today.toLocaleString()
-class TicketService {
+export default class TicketService {
 
     constructor() {
         this.ticketRepository = ticketRepository,
@@ -33,8 +32,8 @@ class TicketService {
     
                 let amount = 0;
                 const code = faker.string.alphanumeric(5);
-                const date= new Date()
-                const purchase_datetime = date.toLocaleString();
+                const date=  moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                const purchase_datetime = date;
                 let products = [];
                 let unsuccessfulProducts = [];
     
@@ -58,11 +57,10 @@ class TicketService {
                       continue;
                     }
               
-                    // Restar la cantidad del stock del producto
                     product.stock -= quantity;
                     await product.save();
               
-                    // Agregar el producto a la lista de productos exitosos
+                  
                     products.push({
                       product: product,
                       quantity: quantity,
@@ -125,4 +123,3 @@ class TicketService {
         }
     }
 }
-export const ticketService = new TicketService()

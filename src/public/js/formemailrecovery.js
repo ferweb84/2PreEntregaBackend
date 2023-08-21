@@ -1,10 +1,10 @@
 const form = document.getElementById("recoveryform")
-alert(form)
+
 form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(form);
     const obj = {};
-  alert(data)
+
     data.forEach((value, key) => (obj[key] = value));
 
 

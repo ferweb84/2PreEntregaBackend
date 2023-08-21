@@ -6,9 +6,12 @@ import GithubStrategy from "passport-github2"
 import config from "../config.js";
 import {cartModel}  from "../dao/models/cart.model.js";
 import jwt from 'passport-jwt';
+import { userRepository } from "../dao/repositories/index.js";
+import { userService,cartService } from "../dao/services/index.js";
 
 
-const { clientID, clientSecret, callbackUrl,jwtSecret } = config;  
+
+const { clientID, clientSecret, callbackUrl,jwtSecret,adminEmail } = config;  
 const LocalStrategy = local.Strategy;
 const JWTStrategy=jwt.Strategy;
 const ExtractJwt=jwt.ExtractJwt;
@@ -52,48 +55,53 @@ const initializePassport = () => {
     }));
     passport.use("jwt",new JWTStrategy(jwtOptions, async (jwt_payload,done)=>{
         try {
-            console.log(jwt_payload)
+       
             return done(null,jwt_payload)
         } catch (error) {
            return done(error)
         }
     }))
 
-
-    passport.use("githublogin", new GithubStrategy({
-        clientID,
-        clientSecret,
-        callbackUrl
-    }, async (accessToken, refreshToken, profile, done) => {
-        try {
-  
-            let user = await userModel.findOne({ email: profile._json.email }).lean()
-
-            if (user.email === "adminCoder@coder.com") {
-                user.role = "admin"
-            } else {
-                user.role = "user"
-            }
-            delete user.password
-            if (!user) {
-                let newUser = {
-                    first_name: profile._json.name,
-                    last_name: "",
-                    age: 18,
-                    email: profile._json.email,
-                    password: "",
-                    cart:cartModel.create({})
-
+    
+    passport.use(
+        'github',
+        new GithubStrategy(
+          {
+            clientID,
+            clientSecret,
+            callbackUrl
+          },
+          async (accessToken, refreshToken, profile, done) => {
+            try {
+              const user = await userRepository.findWithMail({ email: profile._json.email })
+              if (!user) {
+                const cart = await cartService.createCart()
+                let role
+    
+                const newUser = {
+                  first_name: profile._json.name,
+                  last_name: '',
+                  age: 18,
+                  email: profile._json.email,
+                  password: '',
+                  role:
+                    profile._json.email === `${adminEmail}`
+                      ? (role = 'admin')
+                      : (role = 'user'),
+                  cart: cart._id
                 }
-                let result = await userModel.create(newUser)
-                
+    
+                const result = await userService.createtheUser(newUser)
                 return done(null, result)
+              }
+    
+              return done(null, user)
+            } catch (error) {
+              return done(error)
             }
-            return done(null, user)
-        } catch (error) {
-            return done(error)
-        }
-    }))
+          }
+        )
+      )
     passport.serializeUser((user, done) => {
 
         done(null, user._id)

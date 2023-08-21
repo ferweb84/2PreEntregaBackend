@@ -1,6 +1,6 @@
 import { userModel } from '../models/user.model.js';
 
-class UserRepository {
+export default class UserRepository {
     constructor(){
         this.model = userModel;
     }
@@ -54,7 +54,7 @@ class UserRepository {
     }
     updateFunction=async (id,user)=>{
         try {
-            console.log(id)
+         
             return await this.model.updateOne({_id:id},user);
             
         } catch (error) {
@@ -78,6 +78,7 @@ class UserRepository {
         }
       }
     deleteInactiveUsers = async (users) => {
+        console.log(users)
         try {
           const deletedUser = await userModel.deleteMany({ cart: { $in: users } })
           return deletedUser
@@ -87,5 +88,3 @@ class UserRepository {
       }
 }
 
-
-export const userRepository = new UserRepository();

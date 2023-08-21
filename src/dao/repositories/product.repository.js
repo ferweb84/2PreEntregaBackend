@@ -1,6 +1,6 @@
 import { productModel } from "../models/product.model.js";
 
-class ProductsRepository {
+export default class ProductsRepository {
     constructor() {
         this.productModel = productModel;
     }
@@ -58,7 +58,7 @@ class ProductsRepository {
     }
     updateProduct=async (pid,product)=>{
         try {
-            console.log(pid)
+       
             return this.productModel.updateOne({_id:pid},product)  
         } catch (error) {
            console.log(error) 
@@ -73,4 +73,3 @@ class ProductsRepository {
         }
     }
 }
-export const productsRepository=new ProductsRepository();

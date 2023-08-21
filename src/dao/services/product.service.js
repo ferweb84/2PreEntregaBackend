@@ -1,9 +1,9 @@
-import { productsRepository } from "../repositories/product.repository.js";
+import { productsRepository } from "../repositories/index.js";
 import ErrorCode from "./errors/enum.errors.js";
 import CustomError from "./errors/errors.service.js";
 import { addProductErrorInfo } from "./errors/info.js";
 
-class ProductsService {
+export default class ProductsService {
     constructor() {
         this.productsRepository = productsRepository
     }
@@ -90,4 +90,3 @@ class ProductsService {
         }
     }
 }
-export const productService=new ProductsService()

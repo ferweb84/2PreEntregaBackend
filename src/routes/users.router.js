@@ -1,11 +1,11 @@
 import {Router}  from "express";
-import { updateFunctionuser,updateUserDocuments,changeroleUser,updateProfile,getallTheusers,deleteForinactivity,deleteUserByCartId } from "../controllers/users.controller.js";
-import { userService } from "../dao/services/user.service.js";
+import { updateFunctionuser,updateUserDocuments,changeroleUser,updateProfile,getallTheusers,deleteForinactivity,deleteUserByCartId ,updateProfile2 } from "../controllers/users.controller.js";
+import { userService } from "../dao/services/index.js";
 import passport from "passport";
 import { uploader } from '../dirname.js'
 import { roladm } from "../../middlewares/auth.js";
 const router = Router();
-// router.put("/premium/:uid",updateFunctionuser);
+ router.put("/premium/:uid",updateFunctionuser);
 router.get("/",passport.authenticate("jwt",{session:false}),getallTheusers)
 router.get("/:uid",passport.authenticate("jwt",{session: false}),async (req,res)=>{
     const{uid}=req.params
@@ -22,7 +22,7 @@ router.post(
 
 
   router.post(
-    '/:uid/documents',
+    '/:uid/documents',passport.authenticate("jwt",{session:false}),
     uploader.fields([
       { name: 'identification' },
       { name: 'address' },
@@ -34,6 +34,11 @@ router.post(
     '/:uid/profile',
     uploader.single('profile'),
     updateProfile
+  )
+  router.put(
+    '/:uid/profilechanges',
+    uploader.single('profile'),
+    updateProfile2
   )
 
   router.delete(

@@ -19,8 +19,19 @@ form.addEventListener("submit", async (e) => {
 
 
   if(response.ok){
-   
-    window.location.href = "/products";
+    Swal.fire({
+      title: 'You have logued successfully!',
+      text: `Welcome!`,
+      allowOutsideClick: false,
+      icon: 'success',
+
+      timer: 2000,
+      timerProgressBar: true,
+      willClose: () => {
+        window.location.href = '/products'
+      }
+    })
+
   }else{
     Swal.fire({
       title: "Password incorrect",

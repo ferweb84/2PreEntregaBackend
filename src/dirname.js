@@ -8,20 +8,7 @@ const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
 
-    // console.log(file.fieldname)
-    // if (file.fieldname === 'profile') {
-    //   cb(null, `${__dirname}/public/images/profiles`)
-    // } else
-    //   if (file.fieldname === 'document') {
-    //     cb(null, `${__dirname}/public/images/documents`)
-    //   } else
-    //     if (file.fieldname === 'products') {
-    //       cb(null, `${__dirname}/public/images/products`)
-    //     }
-    // if(file.filename==="products"){
-    //    cb(null, `${__dirname}/public/images`);
-    // }
-   
+
     let subfolder = ''
     if (
       file.fieldname === 'identification' ||

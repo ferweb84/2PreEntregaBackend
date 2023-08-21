@@ -1,5 +1,5 @@
 import { cartModel } from "../models/cart.model.js";
- class CartRepository {
+export default class CartRepository {
     constructor() {
         this.cartModel = cartModel
     }
@@ -73,4 +73,3 @@ import { cartModel } from "../models/cart.model.js";
         }
     }
 }
-export const cartRepository = new CartRepository();

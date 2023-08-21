@@ -1,9 +1,10 @@
-import { userRepository } from "../repositories/user.repository.js";
+import { userRepository } from "../repositories/index.js";
 import jwt from "jsonwebtoken"
 import config from "../../config.js";
-
+import { sendEmailtousersdeletedforinactivity } from "../../controllers/mail.controller.js";
+import CurrentUserDto from "../dtos/current-user-dto.js";
 const { jwtSecret } = config
-class UserService {
+export default class UserService {
   constructor() {
     this.userRepository = userRepository
   }
@@ -28,6 +29,25 @@ class UserService {
       console.log(error)
     }
   }
+  loginUser(user, rememberMe) {
+    try {
+      const userDTO = new CurrentUserDto(user)
+
+      const jwtUser = JSON.parse(JSON.stringify(userDTO))
+
+      const expireTime = rememberMe ? '7d' : '3h'
+
+      const token = jwt.sign(jwtUser, jwtSecret, {
+        expiresIn: expireTime
+      })
+      if (!token) throw new Error('Auth token signing failed')
+
+      return token
+    } catch (error) {
+      throw error
+    }
+  }
+
   findbyuserid = async (id) => {
     try {
       return await this.userRepository.findById(id)
@@ -131,7 +151,7 @@ class UserService {
 
           roleChanged = await userRepository.updateUser(
             { cart: uid },
-            { role }
+            { role: role }
           )
         } else {
           throw new Error(`You're missing documents to change your role: ${missingStatus.join(', ')}`)
@@ -189,7 +209,36 @@ class UserService {
       throw error
     }
   }
+  async updateProfile2(email, profilePicture) {
+    try {
+      const newUserDocuments = []
+      const { documents } = await userRepository.findById({ email })
 
+      const documentUser = {
+        name: profilePicture.fieldname,
+        reference: `${profilePicture.fieldname}/${profilePicture.filename}`
+      }
+      newUserDocuments.push(documentUser)
+
+      newUserDocuments.forEach((newUserDoc) => {
+        const existingDoc = documents.findIndex(
+          (doc) => doc.name === newUserDoc.name
+        )
+        if (existingDoc !== -1) {
+          documents[existingDoc] = newUserDoc
+        } else {
+          documents.push(newUserDoc)
+        }
+      })
+
+      const updatedUserDocumentsAndStatus = await userRepository.updateUser({ email }, { documents })
+
+      return updatedUserDocumentsAndStatus
+    } catch (error) {
+      console.log(`Failed to update user documents and status with error: ${error}`)
+      throw error
+    }
+  }
   async updateProfile(email, profilePicture) {
     try {
       const newUserDocuments = []
@@ -220,7 +269,7 @@ class UserService {
       throw error
     }
   }
-  async deleteUser (uid) {
+  async deleteUser(uid) {
     try {
       const deletedUser = await userRepository.deleteUser(uid)
       if (!deletedUser) throw new Error(`Error deleting user ${uid}`)
@@ -230,7 +279,7 @@ class UserService {
       throw error
     }
   }
-  async deleteUserByCartId (cid) {
+  async deleteUserByCartId(cid) {
     try {
       const deletedUser = await userRepository.deleteUserByCartId(cid)
       if (!deletedUser) throw new Error(`Error deleting user ${cid}`)
@@ -240,35 +289,49 @@ class UserService {
       throw error
     }
   }
-  async deleteInactiveUsers(users) {
+  async deleteInactiveUsers(users, id) {
     try {
-      const twoDays = 2 * 24 * 60 * 60 * 1000
+       const twoDays = 2 * 24 * 60 * 60 * 1000
+    
       const currentTime = new Date()
-
-      // Evaluar los usuarios inactivos
-      const inactiveUsers = users.filter((user) => {
+     
+     let usersTodelete
+     let deletedUsers
+      let inactiveUsers = users.filter((user) => {
         const lastConnection = new Date(user.last_connection)
+      
         const timeDiff = currentTime - lastConnection
+       
         return timeDiff > twoDays
+     
       })
 
-      if (inactiveUsers.length === 0) throw new Error('No inactive users were found')
+    if (inactiveUsers.length === 0){
+      deletedUsers=null
+      return deletedUsers
 
-      const inactiveUserIds = inactiveUsers.map((user) => user.cart)
+    } 
+     usersTodelete = inactiveUsers.filter((user1) => {
+        return user1.id !== id
+      })
+      
 
-      const deletedUsers = await userRepository.deleteInactiveUsers(inactiveUserIds)
+
+      const inactiveUserIds = usersTodelete.map((user) => user.cart)
+
+      deletedUsers = await userRepository.deleteInactiveUsers(inactiveUserIds)
 
       inactiveUsers.forEach(async (user) => {
-        const mail = {
-          to: user.email,
-          subject: 'Informatic supplies - Account Deletion Notification',
-          html: emailTemplates.accountDeletionEmail(user.name, user.email)
-        }
-        await this.mailService.sendEmail(mail)
+        // const mail = {
+        //   to: user.email,
+        //   subject: 'superhipermegamercado - Account Deletion Notification',
+        //   html: emailTemplates.accountDeletionEmail(user.name, user.email)
+        // }
+       await sendEmailtousersdeletedforinactivity(user.email)
       })
 
       if (!deletedUsers) throw new Error(`Error deleting user ${uid}`)
-
+    
       return deletedUsers
     } catch (error) {
       throw error
@@ -277,5 +340,3 @@ class UserService {
 
 
 }
-
-export const userService = new UserService()

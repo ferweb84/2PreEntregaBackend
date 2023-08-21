@@ -1,5 +1,5 @@
 import { ticketModel } from "../models/ticket.model.js";
-class TicketRepository{
+export default class TicketRepository{
     constructor() {
         this.ticketModel=ticketModel;
     }
@@ -11,4 +11,3 @@ class TicketRepository{
         }
     };
 }
-export const ticketRepository = new TicketRepository()

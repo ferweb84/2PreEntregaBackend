@@ -14,7 +14,7 @@ router.delete("/:cid",deletetheCart)
 
 
 router.post("/:cid/product/:pid",passport.authenticate("jwt",{session:false}),addProductcart)
-router.delete("/:cid/product/:pid",roluser, deleteproductFromthecart)
+router.delete("/:cid/product/:pid", deleteproductFromthecart)
 router.put("/:cid/product/:pid",updateProductFromtheCart)
 
 router.get("/:cid/purchase",purchase)

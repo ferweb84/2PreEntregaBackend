@@ -1,3 +1,6 @@
+import { Logoutfunction } from "./logoutfunction.js";
+
+let logout=document.getElementById("logout")
 const socket = io();
 
 let user;
@@ -103,3 +106,4 @@ socket.on("user-connected", (data) => {
     },
   });
 });
+Logoutfunction(logout)

@@ -11,7 +11,7 @@
           <a class="nav-link active" aria-current="page" href="products">Home</a>
         </li>
       </ul>
-
+          <div><a href="/profile"><button>Profile</button></a></div>
       <div><a href="/admin"><button>User administration</button></a></div>
       <div><a href="cart/{{user.cart}}"><button>Show cart</button></a></div>
       {{!-- {{#if valor}}
@@ -47,7 +47,8 @@
       <div class="px-5 pb-5">
         <h5>{{this.title}}</h5>
         <p>{{this.description}}</p>
-
+        <p id="stock">Available stock:
+          {{this.stock}}</p>
 
 
         <form id="addToCartForm-{{this._id}}">
@@ -92,4 +93,4 @@
 https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
 "></script>
 
-<script src="/js/products.js"></script>
+<script type="module" src="/js/products.js"></script>

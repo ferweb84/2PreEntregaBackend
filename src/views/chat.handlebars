@@ -1,3 +1,28 @@
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">SuperHiperMegaMercado</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="products">Home</a>
+        </li>
+      </ul>
+          <div><a href="/profile"><button>Profile</button></a></div>
+      <div><a href="/admin"><button>User administration</button></a></div>
+      <div><a href="cart/{{user.cart}}"><button>Show cart</button></a></div>
+      {{!-- {{#if valor}}
+         <div><a href="/form-products"><button>Product form</button></a></div>
+      {{/if}} --}}
+      
+       
+      <div><button id="logout">Log out</button></div>
+    </div>
+  </div>
+</nav>
 <div id="app" class="p-4 bg-slate-800/95 h-auto">
 
   <h1
@@ -56,20 +81,7 @@
   <div class="w-auto mx-2">
     <br /><hr /><br />
   </div>
-  <div class="flex justify-around w-auto m-2 bg-gray-800 px-8 py-8 rounded-xl">
 
-    <a href="/realTimeProducts">
-      <button
-        class="text-slate-100 bg-blue-600 hover:bg-blue-700 active:bg-blue-900 focus:ring-2 focus:outline-none focus:ring-blue-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mr-2"
-      >Go to Real Time section! 🛩️</button>
-    </a>
-  </div>
-  <div class="w-auto mx-2">
-    <br /><hr /><br />
-  </div>
-  <div class="flex justify-around w-auto m-2 bg-gray-800 px-8 py-8 rounded-xl">
-    <h3 class="flex p-2 justify-center font-mono text-lg text-slate-200">Go back
-      to the homepage:</h3>
     <a href="/products">
       <button
         class="text-slate-100 bg-blue-600 hover:bg-blue-700 active:bg-blue-900 focus:ring-2 focus:outline-none focus:ring-blue-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mr-2"
@@ -83,4 +95,4 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
 "
 ></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/chat.js"></script>
+<script type="module" src="/js/chat.js"></script>

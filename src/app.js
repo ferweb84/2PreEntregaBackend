@@ -1,54 +1,63 @@
 import express from "express";
 import handlebars from 'express-handlebars'
-import __dirname, { uploader}  from "./dirname.js";
+import __dirname from "./dirname.js";
 
 import cookieParser from "cookie-parser";
-import session from "express-session";
-import MongoStore from "connect-mongo";
+
 import database from "./db.js";
-import config from "./config.js";
-import {winstonLogger} from "./utils/logger.js"
+import cors from "cors";
+import { winstonLogger } from "./utils/logger.js";
 import routesFunction from "./routes/app.router.js";
 import passport from "passport";
 import initializePassport from "./auth/passport.js";
-
+import paymentsRouter from "./routes/payment.router.js"
 import bodyParser from "body-parser";
-
+import { compare } from './views/helper.js'
 
 //Initialization
-const productServer = express();
+const app = express();
 //Middlewares
-productServer.use(bodyParser.json());
-productServer.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-productServer.use(winstonLogger)
-productServer.use(express.json());
-productServer.use(express.static(`${__dirname}/public`));
-productServer.use(express.urlencoded({ extended: true }));
+app.use(winstonLogger)
+app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
+app.use(express.urlencoded({ extended: true }));
 
-//productServer.use(passport.session())
+//app.use(passport.session())
 
-productServer.use(cookieParser())
+app.use(cookieParser())
 initializePassport()
 
-
+// app.use(cors());
+app.use("/api/payments",paymentsRouter);
 
 database.connect();
 
-routesFunction(productServer)
-productServer.use(passport.initialize())
+routesFunction(app)
+app.use(passport.initialize())
 
 
 //View engine
-productServer.engine("handlebars", handlebars.engine());
-productServer.set("views", `${__dirname}/views`);
-productServer.set("view engine", "handlebars");
+app.engine(
+  'handlebars',
+  handlebars.engine({
+    helpers: {
+      compare
+    },
+    defaultLayout: 'main'
+  })
+)
+//app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
 
-const httpServer = productServer.listen(8080, (req, res) => {
+const httpServer = app.listen(8080, (req, res) => {
   try {
     console.log("Listening on port 8080")
   } catch (error) {
-   console.log(error)
+
     return res.status(500).send({
       status: "error",
       error: "Failed to the connect to the server",

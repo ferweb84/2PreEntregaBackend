@@ -3,7 +3,7 @@ import { isValidPassword,createHash } from "../utils.js";
 import __dirname from "../dirname.js";
 import configMailSms from "../config/configmailsms.js";
 import config from "../config.js";
-import { userService } from "../dao/services/user.service.js";
+import { userService } from "../dao/services/index.js";
 import jwt from "jsonwebtoken";
 const {
     nodemailerConfig: { service, port, user, password },
@@ -47,11 +47,7 @@ export async function sendEmailtouser(email){
         html: `
       <p>The product was eliminated<p>
         `,
-        attachments: [{
-            filename: 'yerba-amanda-500.png',
-            path: `${__dirname}/public/images/yerba-amanda-500.png`,
-            cid: 'hola1 yerba'
-        }]
+        
     })
     if (!result) {
         throw new Error('Email send failure')
@@ -59,6 +55,24 @@ export async function sendEmailtouser(email){
     return result
 
 }
+export async function sendEmailtousersdeletedforinactivity(email){
+
+    let result = await transport.sendMail({
+        from: `SuperHiperMegaMercado ${user}`,
+        to: email,
+        subject: "Notification",
+        html: `
+      <p>Your account has been deleted for inactivity<p>
+        `,
+ 
+    })
+    if (!result) {
+        throw new Error('Email send failure')
+    }
+    return result
+
+}
+
 export async function sendEmail(req, res) {
     const { email } = req.body
 
@@ -107,16 +121,12 @@ export async function resetPassword(req, res) {
     const user= await userService.findbyuserid({ email });
 
     if (!user || user.resetToken !== token || user.tokenExpiration < Date.now()) {
-        // Token inválido o expirado, manejo del error
-        //console.log("no es valido link ");
-        //return res.redirect('/');
-        return res.send({ status: "novalidolink", result: "link expiro" });
+        
+        return res.send({ status: "link no valido", result: "link expiro" });
     }
 
     if (!isValidPassword(user, password)) {
 
-
-        // Actualizar la contraseña del usuario y borrar el token y la fecha de expiración
         user.password = createHash(password);
         user.resetToken = undefined;
         user.tokenExpiration = undefined;
@@ -126,7 +136,7 @@ export async function resetPassword(req, res) {
         return res.send({ status: "success", result: userac });
     }
     else {
-        //console.log("no puede guardar la misma password ");
+        
         return res.send({ status: "error", result: "no puede guardar la misma password " });
 
     }

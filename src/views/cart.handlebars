@@ -8,7 +8,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="products">Home</a>
+          <a class="nav-link active" aria-current="page" href="products"></a>
         </li>
       </ul>
           <div><a href="/profile"><button>Profile</button></a></div>
@@ -23,8 +23,8 @@
     </div>
   </div>
 </nav>
-  <h1 class="flex p-2 justify-center font-mono text-2xl text-slate-200">Details
-    Cart ID;
+  <h1 class="flex p-2 justify-center font-mono text-2xl text-slate-200">
+    DETAIL CARD ID:
     <span id="cartId">{{cart._id}}</span></h1>
   {{#if cart.products}}
     <div id="cartDetail" class="flex flex-col justify-center m-6 items-center">
@@ -33,7 +33,7 @@
           style="width: 100%;"
           id="{{this.productId._id}}"
         >
-          <div style="display:flex; align-items:center;background-color:cornflowerblue">
+          <div style="display:flex; align-items:center;background-color:rgb(202, 215, 212)">
             <img
               src="{{lookup this.productId.thumbnails 0}}"
               alt="product image"
@@ -44,7 +44,7 @@
                 class="text-2xl font-semibold  text-black text-center"
               >{{this.productId.title}}</h5>
               <p class="font-light  text-black my-1">Selected
-                quantity:
+                Quantity:
                 {{this.quantity}}</p>
               <p class="font-light text-black my-1">Unit price: ${{this.productId.price}}</p>
               <div class="flex justify-between">

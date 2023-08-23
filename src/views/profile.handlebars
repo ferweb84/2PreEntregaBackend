@@ -8,7 +8,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="products">Home</a>
+          <a class="nav-link active" aria-current="page" href="products"><button>Home</button></a>
         </li>
       </ul>
           <div><a href="/profile"><button>Profile</button></a></div>
@@ -39,18 +39,14 @@
             class="w-24 h-24 m-2 ring-2 ring-slate-500 rounded-full my-4 object-cover"
           />
           {{else}}
-          <svg
-            class="mt-6 w-2 h-24 mb-3 rounded-full shadow-lg text-gray-400"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clip-rule="evenodd"
-            ></path>
+          <svg width="200" height="200" viewBox="0 0 10 10">
+              <path
+                fill-rule="evenodd"
+                d="M5 4a2 2 0 100-4 2 2 0 000 4zm-4 4a4 3.5 0 118 0H2z"
+                clip-rule="evenodd"
+              ></path>
           </svg>
+
           {{/if}}
         </div>
         <h5

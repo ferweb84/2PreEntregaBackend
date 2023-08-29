@@ -1,124 +1,72 @@
 import express from "express";
-import handlebars from 'express-handlebars';
-import __dirname from "./utils.js";
-import socket from './socket.js';
-import dotenv from "dotenv";
-import productsRouter from './routes/products.router.js';
-import cartrouter from './routes/cart.router.js';
-import viewrouter from './routes/views.router.js';
-import sessionsRouter from "./routes/sessions.router.js";
-import database from "./db.js";
+import handlebars from 'express-handlebars'
+import __dirname from "./dirname.js";
+
 import cookieParser from "cookie-parser";
-import session from "express-session";
-import FileStorage from "session-file-store";
-import MongoStore from "connect-mongo";
-import morgan from "morgan";
-import config from "./config.js"
+
+import database from "./db.js";
+import cors from "cors";
+import { winstonLogger } from "./utils/logger.js";
+import routesFunction from "./routes/app.router.js";
 import passport from "passport";
 import initializePassport from "./auth/passport.js";
+import paymentsRouter from "./routes/payment.router.js"
+import bodyParser from "body-parser";
+import { compare } from './views/helper.js'
 
+//Initialization
 const app = express();
+//Middlewares
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(winstonLogger)
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
-app.set("trust proxy", 1)
 
-app.use(session({
-    store: MongoStore.create({
-        mongoUrl:config.dbUrl,
-        ttl:60
-    }),
-    resave:true, 
-    saveUninitialized:false,
-    secret:'secret',})
-    );
+//app.use(passport.session())
 
-app.use(passport.initialize());
-app.use(passport.session());
-initializePassport();
+app.use(cookieParser())
+initializePassport()
 
-const fileStorage = FileStorage (session);
+// app.use(cors());
+app.use("/api/payments",paymentsRouter);
 
-app.use (cookieParser("CoderClave18#$"));
+database.connect();
 
-app.use(express.static(`${__dirname}/public`));
-app.engine("handlebars", handlebars.engine());
+routesFunction(app)
+app.use(passport.initialize())
+
+
+//View engine
+app.engine(
+  'handlebars',
+  handlebars.engine({
+    helpers: {
+      compare
+    },
+    defaultLayout: 'main'
+  })
+)
+//app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-const httpServer = app.listen(8080, () => {
-    try {
-        console.log("Servidor arriba en el puerto 8080");
-        
-    } catch (error) {
-        console.log(error);
-    }
-});
+const httpServer = app.listen(8080, (req, res) => {
+  try {
+    console.log("Listening on port 8080")
+  } catch (error) {
 
-database.connect()
-socket.connect(httpServer)
-
-app.use("/", viewrouter);
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartrouter);
-app.use("/api/sessions", sessionsRouter);
-
-app.use("/setCookie",(req,res)=>{
-    res
-    .cookie("CoderCookie", "Una cookie compleja",{signed:true}) 
-    .send("Cookie created")
+    return res.status(500).send({
+      status: "error",
+      error: "Failed to the connect to the server",
+  });
+  }
 });
 
 
-app.get("/getCookies", (req,res) =>{
+//socket.connect(httpServer)
 
-res.send (req.signedCookies);
-});
 
-app.get ("/deleteCookie", (req, res)=>{
-    res.clearCookie("CoderCookie").send ("Cookie Deleted");
-});
-
-app.get ("/mongostore",(req,res)=>{
-    return res.send({
-        status: "sucess",
-        payload:"Yo sabia que te conocia, Te di un plato de avena en 1947 para q pintaras mi cocina y nunca la pintaste"
-    });
-})
-
-app.get('/fileSessions',(req,res)=>{
-    return res.send ({status: "success",payload: "hello"})
-});
-
-app.get ('/session', (req,res)=> {
-    if (req.session.counter){
-        req.session.counter++;
-        res.send(`Se ha visitado el sitio ${req.session.counter}veces`)
-    }
-    
-    else{req.session.counter=1;
-    res.send('Bienvenido')}
-});
-
-app.get('/logout',(req,res)=>{
-  
-    req.session.destroy( err=>{
-        if (!err) res.send ('Logout ok!')
-        else res.send({status: 'Logout  ERROR', body:err})
-    })
-})
-
-function auth (req, res, next){
-    if (req.session?.user==='pepe' && req.session?.admin){
-        return next();
-    }
-
-    return res.status(401).send('error de autorizacion');
-}
-
-app.get ("/private", auth,(req,res)=>{
-    res.send("Si ves esto es porque ya te logueaste")
-})
 

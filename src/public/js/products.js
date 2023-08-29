@@ -1,52 +1,53 @@
+import { Logoutfunction } from "./logoutfunction.js";
 const addToCartForms = document.querySelectorAll('[id^="addToCartForm-"]');
-const logout= document.getElementById("logout")
+let cId=document.getElementById("cid").value
+let stock = document.getElementById('stock').value;
+let logout=document.getElementById("logout")
 addToCartForms.forEach((form) => {
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const cartId = form.querySelector("#cid").value;
+
+
+    
     const productId = form.getAttribute("id").split("-")[1];
 
     const prodTitle = form.closest("div").querySelector("h5").textContent;
 
-    fetch(`/api/carts/${cartId}/product/${productId}`, {
-      method: "POST",
-    })
-      .then(() => {
-        Swal.fire({
-          title: "Product added to cart!",
-          text: `You added 1 unit of ${prodTitle}`,
-          toast: true,
-          position: "top-right",
-          icon: "success",
-        
-        });
+    try {
+      let response = fetch(`/api/carts/${cId}/product/${productId}`, {
+        method: "POST",
       })
-      .catch((error) => console.log(error));
+      const data = await response.json()
+      if (parseInt(stock) >= 1) {
+        if (response.ok) {
+          Swal.fire({
+            title: "Product added to cart!",
+            text: `You added 1 unit of the product ${prodTitle.innerHTML}`,
+            toast: true,
+            position: "top-right",
+            icon: "success",
+  
+          });
+        } else {
+          throw data
+        }
+      }else{
+        throw { error: 'Product is out of stock, sorry' }
+      }
+  
+    } catch ({ error }) {
+      Swal.fire({
+        title: 'Error!',
+        html: `<p>There is something wrong when your request</p>`,
+        icon: 'error',
+        timer: 4000,
+        footer: 'Reloading page on close',
+        timerProgressBar: true,
+        willClose: () => {
+          location.reload()
+        }
+      })
+    }
   });
 });
-logout.addEventListener("click",(e)=>{
-  fetch(`/api/sessions/logout`, {
-    method: "GET",
-  }) .then(() => {
-    Swal.fire({
-      title: "Logout successful!",
-      text: `Redirecting you to the login`,
-      allowOutsideClick: false,
-      confirmButton: false,
-      icon: "success",
-      timer: 3000,
-      //timerProgressBar: true,
-      customClass: {
-        popup: "!text-slate-200 !bg-slate-800/90 !rounded-3xl",
-        confirmButton: "!bg-blue-600 !px-5",
-        timerProgressBar: "!m-auto !h-1 !my-2 !bg-blue-600/90 !rounded-3xl",
-      },
-      willClose: () => {
-        window.location.href = "/";
-      }
-      
-    });
-  })
-  .catch((error) => console.log(error));
-
-})
+Logoutfunction(logout)

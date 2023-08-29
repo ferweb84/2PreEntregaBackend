@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">SuperCoderMercado</a>
+    <a class="navbar-brand" href="#">SuperHiperMegaMercado</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -8,23 +8,29 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="products">Home</a>
+          <a class="nav-link active" aria-current="page" href="products"></a>
         </li>
-    
-        
-
       </ul>
+          <div><a href="/profile"><button>Profile</button></a></div>
+      <div><a href="/admin"><button>User administration</button></a></div>
+      <div><a href="cart/{{user.cart}}"><button>Show cart</button></a></div>
+      {{!-- {{#if valor}}
+         <div><a href="/form-products"><button>Product form</button></a></div>
+      {{/if}} --}}
+      
+       
       <div><button id="logout">Log out</button></div>
     </div>
   </div>
 </nav>
 <div id="app">
 
-  <h1 style="display: flex; justify-content: center;">Bienvenido
-     {{user.name}} {{user.last_name}} </h1>
+  <h1 style="display: flex; justify-content: center;">Bienvenido {{user.first_name}} {{user.last_name}} </h1>
   <h2>{{user.email}}</h2>
   <h2>{{user.age}}</h2>
-  <h2>{{user.role}}</h2>
+  <h2 style="visibility:hidden">{{user.role}}</h2>
+  <input type="text" name="cid" id="cid" style="visibility:hidden" value={{user.cart}} />
+
   <h2 class="flex p-2 justify-center font-mono text-2xl text-slate-200">Products list</h2>
   <h2 class="flex p-2 justify-center font-mono text-xl text-slate-200">Check our
     products:</h2>
@@ -41,19 +47,20 @@
       <div class="px-5 pb-5">
         <h5>{{this.title}}</h5>
         <p>{{this.description}}</p>
-
+        <p id="stock">Available stock:
+          {{this.stock}}</p>
 
 
         <form id="addToCartForm-{{this._id}}">
           <div>
             <p>${{this.price}}</p>
             <button type="submit">Add
-              to cart 🛒</button>
+              to cart</button>
           </div>
-          <div>
-            <input placeholder=" " type="text" name="cid" id="cid" required />
+          {{!-- <div>
+
             <label for="cid">Cart ID</label>
-          </div>
+          </div> --}}
 
         </form>
         <a href="product/{{this._id}}">
@@ -72,7 +79,7 @@
     {{/if}}
 
     <p
-    >
+      class="text-slate-100 bg-gray-500/50 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-6 py-2.5 text-center mx-4">
       {{page}}</p>
 
     {{#if hasNextPage}}
@@ -86,4 +93,4 @@
 https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
 "></script>
 
-<script src="/js/products.js"></script>
+<script type="module" src="/js/products.js"></script>

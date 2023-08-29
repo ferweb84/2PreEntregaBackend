@@ -1,78 +1,34 @@
-import ProductManager from '../dao/dbManagers/productdbManager.js';
-import CartdbManager from '../dao/dbManagers/cartdbManager.js';
+import passport from 'passport';
+import { getViewProducts,getProductwithitsid , getCartwithitsId,loginView,registerView,productsInformation,chatView,ticket,mailtorecovery,recoverpassword,formproducts,getAdminview,viewPayment,profileView} from '../controllers/views.controller.js';
 import { Router } from "express";
-import { checkLogged,checkLogin } from '../middlewares/auth.js';
-// import UserManager from '../dao/dbManagers/userdbManager.js';
-
+ import { roladm} from '../../middlewares/auth.js';
 
 const router = Router();
-// const usermanager= new UserManager();
-const productmanager = new ProductManager();
-const cartdbManager = new CartdbManager();
-router.get("/products", async (req, res) => {
-  const { limit = 2, page = 1, category, usable, sort } = req.query;
-  const {
-    docs: products,
-    hasPrevPage,
-    hasNextPage,
-    nextPage,
-    prevPage,
-  } = await productmanager.getProducts(page, limit, category, usable, sort);
-  res.render("products", {
-    userSession:req.session.user,
-    products,
-    page,
-    hasPrevPage,
-    hasNextPage,
-    prevPage,
-    nextPage,
 
-  });
-})
+router.get("/products",passport.authenticate("jwt", { session: false }), getViewProducts)
+router.get("/payments",viewPayment)
+router.get("/product/:pid",passport.authenticate("jwt",{session: false}),getProductwithitsid);
 
-router.get("/product/:pid",async (req, res) => {
-  const { pid } = req.params;
-  const product = await productmanager.getProductsbyId(pid);
-  res.render("product", {
-    product,
+router.get("/cart/:cid",passport.authenticate("jwt",{session:false}),getCartwithitsId);
+router.get("/cart/:cid/purchase",passport.authenticate("jwt",{session:false}),ticket)
+router.get(
+  '/profile',
+  passport.authenticate('jwt', { session: false }),
+  profileView
+)
 
-  });
-});
-router.get("/cart/:cid", async (req, res) => {
-  const { cid } = req.params;
-  const cart = await cartdbManager.getCartsbyId(cid);
-  res.render("cart", {
-    cart,
+router.get("/",loginView);
+router.get("/admin",passport.authenticate("jwt",{session:false}),roladm,getAdminview)
+router.get("/register", registerView);
 
-  });
-});
-
-
-router.get("/" ,(req, res) => {
-  res.render("login");
-});
-
-// router.get("/register", (req, res) => {
-//   res.render("register");
-// });
-
-router.get("/products", (req, res) => {
-  res.render("products", { user: req.session.user });
-});
-
-//cookies
-
-router.get("/", (req, res) => {
-  res.render("home", { title: "home" });
-});
-
-router.post("/createCookie", (req, res) => {
-  const data = req.body;
-
-  return res
-    .cookie("CoderCookie", data, { maxAge: 10000 })
-    .send({ status: "success", message: "cookie set" });
-});
-
-
+router.get("/formemailrecovery", mailtorecovery)
+router.get("/recoverypassword/:token",recoverpassword)
+router.get("/products", productsInformation);
+router.get("/form-products",formproducts)
+router.get(
+    "/chat",
+    
+    chatView
+  );
 export default router;
+

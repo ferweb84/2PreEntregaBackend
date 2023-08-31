@@ -6,10 +6,7 @@ const { jwtSecret,cookieName } = config
 export async function updateFunctionuser(req, res) {
   try {
 
-
-
     const user_Id = req.params.uid;
-
 
     let user = await userService.findbyuserid({ _id: user_Id });
 
@@ -25,20 +22,17 @@ export async function updateFunctionuser(req, res) {
         user = await userService.updateFunction(user_Id, { role: "user" })
 
       }
-      // result = await userService.updateFunction(user_Id, user);
     }
 
-    // if (!result) {
-    //    req.logger.error(`The user with the id ${pid} cannot be update his function`);
-    //     return res.send({ status: "error", error: "Incomplete values" });
-    // }
+    if (!result) {
+       req.logger.error(`The user with the id ${pid} cannot be update his function`);
+        return res.send({ status: "error", error: "Incomplete values" });
+    }
  
     return res.send({ status: "user successfully updated", payload: user});
   } catch (error) {
     console.log(error)
   }
-
-
 }
 
 export const logoutUser = async (req, res) => {
@@ -113,7 +107,7 @@ export const githubCallback = async (req, res) => {
     if (!token) {
       return res
         .status(500)
-        .send({ status: 'error', error: 'Failed to generate JWT token' })
+        .send({ status: 'error', error: 'Failed to generate token' })
     }
 
     return res.cookie(cookieName, token, { httpOnly: true }).redirect('/products')
@@ -159,7 +153,7 @@ export async function updateUserDocuments(req, res) {
   } catch (error) {
     console.log(error)
   
-    // req.logger.error(`Cannot update user documents with error: ${error}`)
+    req.logger.error(`Cannot update user documents with error: ${error}`)
     return res.status(500).send({
       status: 'error',
       error: 'Failed to update user documents and status'
@@ -202,11 +196,11 @@ export async function updateProfile2(req, res){
 
     res.status(201).send({ status: 'success', payload: updatedProfilePicture })
   } catch (error) {
-    console.log(error)
-    // return res.status(500).send({
-    //   status: 'error',
-    //   error: 'Failed to update profile images or error in the database'
-    // })
+    
+    return res.status(500).send({
+      status: 'error',
+      error: 'Failed to update profile images or error in the database'
+    })
   }
 }
 
@@ -243,11 +237,11 @@ export async function updateProfile(req, res){
 
     res.status(201).send({ status: 'success', payload: updatedProfilePicture })
   } catch (error) {
-    console.log(error)
-    // return res.status(500).send({
-    //   status: 'error',
-    //   error: 'Failed to update profile images or error in the database'
-    // })
+   
+    return res.status(500).send({
+      status: 'error',
+      error: 'Failed to update profile images or error in the database'
+    })
   }
 }
 export const deleteForinactivity = async (req, res) => {

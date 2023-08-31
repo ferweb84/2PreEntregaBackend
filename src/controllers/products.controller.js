@@ -63,7 +63,7 @@ export async function addProducts(req, res) {
         if (filesToUpdate) {
 
             filesToUpdate.forEach(files => {
-                const imgUrlUpdate = `http://localhost:8080/thumbnails/${files.filename}`;
+                const imgUrlUpdate = `thumbnails/${files.filename}`;
 
                 product.thumbnails.push(imgUrlUpdate)
 

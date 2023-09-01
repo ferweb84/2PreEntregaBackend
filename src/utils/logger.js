@@ -54,7 +54,3 @@ export const winstonLogger = (req, res, next) => {
     }
     next();
 };
-
-// const logger = mode === false ? productionLogger : developmentLogger;
-
-// export { logger };

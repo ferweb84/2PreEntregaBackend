@@ -18,9 +18,7 @@ router.get("/failLogin",failLogin)
 
 router.get("/current",passport.authenticate("jwt",{session:false}),getcurrentUser)
 
-router.get("/github", passport.authenticate('github', { scope: ['user:email'] }),(req,res)=>{
-
-})
+router.get("/github", passport.authenticate('github', { scope: ['user:email'] }),githubLogin)
 
 router.get("/githubcallback",passport.authenticate("github", { session: false, failureRedirect: '/' }),githubCallback)
 

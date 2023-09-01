@@ -15,7 +15,6 @@ Swal.fire({
 const list = document.getElementById("listproducts")
 const imagelist = document.getElementById("imageproducts")
 socket.on("products", (products) => {
-    // productList.innerHTML+=products // let showProducts = ""
  
        let listProducts = "";
     products.forEach((prod) => {

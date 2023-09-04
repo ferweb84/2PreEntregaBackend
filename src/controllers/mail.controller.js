@@ -26,8 +26,8 @@ sendEmail = async ({ to, subject, html, attachments = [] }) => {
     try {
       const sentEmail = await this.transport.sendMail({
         from: `SuperHiperMegaMercado ${user}`,
-        to: user,
-        subject: "Test Mail",
+        to,
+        subject,
         html,
         attachments
       })

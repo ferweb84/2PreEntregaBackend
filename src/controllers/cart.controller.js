@@ -57,7 +57,7 @@ export async function addProductcart(req, res) {
         let resul = {}
 
         let prod = await productService.getProductsbyitsId({_id:pId});
-       // let user=await userService.findbyuserid({_id:req.user.id})
+       
         console.log(prod.stock)
         if(prod.stock === 0){
             return res
@@ -68,14 +68,7 @@ export async function addProductcart(req, res) {
         }
       
     
-
-        // if (!resul || typeof resul === "string") {
-        //     return res
-        //         .status(400)
-        //         .send({ status: "error", error: resul });
-        // }
-        // return res.send({ status: "success", payload: resul });
-           return res.send({ status: "success", payload: "paso" });
+        return res.send({ status: "success", payload: resul });
 
     } catch (error) {
         
@@ -132,7 +125,6 @@ export async function deletetheCart(req, res) {
     try {
 
         const cId = req.params.cid;
-
         let resultado = await cartService.deleteCart(cId);
         if (!resultado) {
             return res
@@ -163,12 +155,11 @@ export async function deleteproductFromthecart(req, res) {
         return res.send({ status: "success", payload: resul });
 
     } catch (error) {
-        console.log(error)
-        // req.logger.error(`Cannot update the quantity of products of the cart with mongoose ${error}`);
-        // return res.status(500).send({
-        //     status: "error",
-        //     error: "Failed to delete products from the cart",
-        // });
+        req.logger.error(`Cannot update the quantity of products of the cart with mongoose ${error}`);
+        return res.status(500).send({
+            status: "error",
+            error: "Failed to delete products from the cart",
+        });
     }
 }
 export async function purchase(req, res) {

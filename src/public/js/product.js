@@ -1,12 +1,11 @@
-import { Logoutfunction } from "./logoutfunction.js";
-const logout = document.getElementById("logout")
+
+const logout1 = document.getElementById("logout1")
 const formButton = document.getElementById('botonForm');
 let cId = document.getElementById("cid").value;
 
 let pId = document.getElementById('pid').value;
 let stock = document.getElementById('stock').value;
-// addToCart.forEach((form) => {
-const home = document.getElementById("home");
+
 formButton.addEventListener("click", async (e) => {
   e.preventDefault();
 
@@ -16,11 +15,11 @@ formButton.addEventListener("click", async (e) => {
   const title = document.getElementById("title")
 
   try {
-    let response = fetch(`/api/carts/${cId}/product/${pId}`, {
+    let response = await  fetch(`/api/carts/${cId}/product/${pId}`, {
       method: "POST",
     })
-    const data = await response.json()
-    if (parseInt(stock) >= 1) {
+
+
       if (response.ok) {
         Swal.fire({
           title: "Product added to cart!",
@@ -30,12 +29,8 @@ formButton.addEventListener("click", async (e) => {
           icon: "success",
 
         });
-      } else {
-        throw data
-      }
-    }else{
-      throw { error: 'Product is out of stock, sorry' }
-    }
+      } 
+  
 
   } catch ({ error }) {
     Swal.fire({
@@ -82,5 +77,26 @@ logout.addEventListener("click", (e) => {
     .catch((error) => console.log(error));
 
 })
-Logoutfunction(logout)
-// });
+alert(logout1)
+logout1.addEventListener("click", (e)=>{
+  fetch(`/api/sessions/logout`, {
+    method: "GET",
+  }) .then(() => {
+    Swal.fire({
+      title: "Logout successful!",
+      text: `Redirecting you to the login`,
+      allowOutsideClick: false,
+
+      icon: "success",
+      timer: 3000,
+     
+      willClose: () => {
+        window.location.href = "/";
+      }
+      
+    });
+  })
+  .catch((error) => console.log(error));
+
+})
+

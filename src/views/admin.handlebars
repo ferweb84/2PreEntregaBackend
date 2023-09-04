@@ -8,15 +8,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="products"></a>
+          <a class="nav-link active" aria-current="page" href="products"><button>Home</button></a>
         </li>
       </ul>
           <div><a href="/profile"><button>Profile</button></a></div>
       <div><a href="/admin"><button>User administration</button></a></div>
       <div><a href="cart/{{user.cart}}"><button>Show cart</button></a></div>
-      {{!-- {{#if valor}}
-         <div><a href="/form-products"><button>Product form</button></a></div>
-      {{/if}} --}}
+
       
        
       <div><button id="logout">Log out</button></div>
@@ -54,8 +52,7 @@
             <p class="text-sm font-light text-slate-300">Role: {{this._doc.role}}</p>
             <p class="text-sm font-light text-slate-300">Last connection: {{this.last_connection}}</p>
           </div>
-          {{!-- <h5>{{this._doc.cart}}</h5>
-          <h5>{{this._doc._id}}</h5> --}}
+          
         <button id="deleteUser-{{this._doc.cart}}" class="text-slate-100 bg-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-600 font-medium rounded-lg text-sm w-auto px-3 mx-4 text-center"><span>Delete user</span></button>
          <button id="changeRole-{{this._doc._id}}" class="text-slate-100 bg-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-600 font-medium rounded-lg text-sm w-auto px-3 mx-4 text-center"><span>Change role</span></button>
         </div>

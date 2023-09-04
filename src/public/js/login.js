@@ -1,6 +1,7 @@
 const form = document.getElementById("login");
 const inputEmail=document.getElementById("email");
 const inputPass=document.getElementById("password");
+const githubBtn = document.getElementById('githubBtn')
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -41,3 +42,15 @@ form.addEventListener("submit", async (e) => {
     });
   }
 });
+githubBtn.addEventListener('click', (e) => {
+  if (e.target.matches('#githubBtn')) {
+    Swal.fire({
+      title: 'Processing login.',
+      text: 'Please, wait for a moment',
+      allowOutsideClick: false,
+      icon: 'info',
+      timer: 3000,
+      timerProgressBar: true
+    })
+  }
+})

@@ -10,7 +10,7 @@ export const Logoutfunction=(logout)=>{
       
             icon: "success",
             timer: 3000,
-            //timerProgressBar: true,
+            
             willClose: () => {
               window.location.href = "/";
             }

@@ -16,11 +16,11 @@ export async function loginUser(req, res) {
   const user = await userService.findWiththemail({ email: email })
   if (!user) return res.status(401).send({ status: "error", error: "User does not exist" })
   if (!isValidPassword(user, password)) return res.status(401).send({ status: "error", error: "Invalid credentials" })
-  // if (user.email === "adminCoder@coder.com") {
-  //   user.role = "admin"
-  // } else {
-  //   user.role = "user"
-  // }
+  if (user.email === "adminCoder@coder.com") {
+    user.role = "admin"
+  } else {
+    user.role = "user"
+  }
   const jwtUser = {
     id: user._id,
     first_name: user.first_name,

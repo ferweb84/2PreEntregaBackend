@@ -1,11 +1,9 @@
 import { productService,cartService,messagesService,ticketService,userService } from '../dao/services/index.js';
-
 import __dirname from '../dirname.js';
 import config from "../config.js";
 import jwt from "jsonwebtoken"
 export async function getViewProducts(req,res){
 
-    
 
     const { limit = 2, page = 1, category, usable, sort } = req.query;
     const {
@@ -132,8 +130,7 @@ export async function getAdminview(req,res){
     res.render('admin', {
       parsedUsers,
       user:req.user,
-      //style: 'styles.css',
-       title: 'Admin Panel'
+      title: 'Admin Panel'
     })
   } catch (error) {
     req.logger.error(`Failed to render admin view: ${error}`)
